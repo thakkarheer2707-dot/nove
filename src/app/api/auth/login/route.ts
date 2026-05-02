@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import supabase from "@/lib/supabase";
+import { login } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -10,20 +11,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
 
-    // Default admin interceptor for unified login flow
-    if (email === "admin@nove.in" && password === "admin123") {
-      return NextResponse.json({
-        success: true,
-        user: { name: "NOVE Administrator", email: "admin@nove.in" },
-        isAdmin: true,
-        message: "Admin access granted",
-      });
-    }
+    const trimmedEmail = email.toLowerCase().trim();
 
+    // Check for user in database
     const { data: user, error } = await supabase
       .from("users")
-      .select("id, name, email, password")
-      .eq("email", email.toLowerCase().trim())
+      .select("id, name, email, password, role")
+      .eq("email", trimmedEmail)
       .single();
 
     if (error || !user) {
@@ -34,13 +28,12 @@ export async function POST(request: Request) {
     if (user.password && user.password.includes(":")) {
       const [salt, storedHash] = user.password.split(":");
       const derivedKey = crypto.scryptSync(password, salt, 64).toString("hex");
-      // Use constant-time comparison to prevent timing attacks
       isValid = crypto.timingSafeEqual(
         Buffer.from(storedHash, "hex"),
         Buffer.from(derivedKey, "hex")
       );
     } else {
-      // Fallback for any old cleartext passwords during transition
+      // Fallback for cleartext (security risk - only for legacy support)
       isValid = user.password === password;
     }
 
@@ -48,14 +41,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid password. Please try again." }, { status: 401 });
     }
 
-    console.log(`[AUTH] User signed in: ${email}`);
+    // Determine admin status
+    // Priority: 1. DB role field, 2. Admin email environment variable, 3. Legacy hardcoded check (only as fallback)
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@nove.in";
+    const isAdmin = user.role === "admin" || trimmedEmail === adminEmail;
+
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isAdmin,
+    };
+
+    // Create session cookie
+    await login(userData);
+
+    console.log(`[AUTH] User signed in: ${trimmedEmail} (Admin: ${isAdmin})`);
 
     return NextResponse.json({
       success: true,
-      user: {
-        name: user.name,
-        email: user.email,
-      },
+      user: userData,
+      isAdmin, // Still return for UI convenience, but server will verify via cookie
       message: "Signed in successfully",
     });
   } catch (error) {
@@ -63,3 +69,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+

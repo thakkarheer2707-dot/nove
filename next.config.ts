@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: [
           {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' blob: data: https:; font-src 'self' https://fonts.gstatic.com; frame-src https://api.razorpay.com https://checkout.razorpay.com; connect-src 'self' https://api.razorpay.com https://*.supabase.co;",
+          },
+          {
             key: "X-DNS-Prefetch-Control",
             value: "on",
           },
@@ -23,7 +27,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            value: "DENY",
           },
           {
             key: "X-Content-Type-Options",
@@ -31,12 +35,13 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
+            value: "strict-origin-when-cross-origin",
           },
         ],
       },
     ];
   },
+
 };
 
 export default nextConfig;

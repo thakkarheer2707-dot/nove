@@ -3,16 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Feather, Droplets, Gem } from "lucide-react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import HangingBag from "@/components/HangingBag";
 
 const HERO_IMAGES = [
-  "/products/product_1.png",
-  "/products/product_7.png",
-  "/products/product_10.png",
-  "/products/product_11.png",
-  "/products/product_3.png",
+  "/products/Ember/ember_v3.png",
+  "/products/Terra/te1_v2.png",
+  "/products/Aqua/aq_v1.png",
+  "/products/Aqua/aqr_v1.png",
+  "/products/Ember/ember_5.png",
 ];
 
 
@@ -24,14 +24,10 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [introDone, setIntroDone] = useState(false);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 4000); // 4 seconds per purse
-    return () => clearInterval(timer);
-  }, []);
+  const { scrollY } = useScroll();
+  const smoothScrollY = useSpring(scrollY, { stiffness: 35, damping: 25, restDelta: 0.001 });
 
-  const { scrollYProgress: mainScrollY, scrollY } = useScroll({
+  const { scrollYProgress: mainScrollY } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
@@ -46,9 +42,30 @@ export default function Home() {
     offset: ["start end", "end start"]
   });
 
+  const bagMergeProgress = useTransform(smoothScrollY, [500, 650], [0, 1]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Rotate after the bag has settled in the center
+      if (smoothScrollY.get() > 800) {
+        setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+      }
+    }, 4000); 
+    return () => clearInterval(timer);
+  }, [smoothScrollY]);
+
+  // Force index 0 (Black Bag) until the placing sequence is fully complete
+  useEffect(() => {
+    return smoothScrollY.on("change", (latest) => {
+      if (latest < 750 && currentIndex !== 0) {
+        setCurrentIndex(0);
+      }
+    });
+  }, [smoothScrollY, currentIndex]);
+
   // Section 1: Hero Transforms
-  const heroOpacity = useTransform(scrollY, [0, 1500, 1800], [1, 1, 0]);
-  const heroParallax = useTransform(scrollY, [0, 1800], [0, 900]);
+  const heroOpacity = useTransform(smoothScrollY, [0, 1500, 1800], [1, 1, 0]);
+  const heroParallax = useTransform(smoothScrollY, [0, 1800], [0, 900]);
 
   // Section 2: Craftsmanship Island Morphing
   const craftsmanshipScale = useTransform(craftsmanshipScroll, [0, 0.4, 0.6, 1], [0.85, 1, 1, 0.85]);
@@ -62,7 +79,7 @@ export default function Home() {
 
   return (
     <div ref={containerRef} className="flex flex-col bg-[#fbfbfd] min-h-screen">
-      <HangingBag onDropComplete={() => setIntroDone(true)} cardRef={cardRef} />
+      <HangingBag onDropComplete={() => setIntroDone(true)} cardRef={cardRef} scrollYValue={smoothScrollY} />
       
       <motion.div
          initial="hidden"
@@ -101,14 +118,14 @@ export default function Home() {
 
         <motion.div 
           style={{ opacity: heroOpacity, y: heroParallax }}
-          className="relative z-10 text-center flex flex-col items-center px-6 mt-[calc(65vh-200px)] md:mt-[calc(65vh-200px)]"
+          className="relative z-10 text-center flex flex-col items-center px-6 mt-[25vh] md:mt-[45vh]"
         >
           <motion.h1 
             variants={{
               hidden: { opacity: 0, y: 30 },
               visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
             }}
-            className="text-6xl md:text-8xl font-sans font-bold tracking-tighter text-[#1d1d1f] mb-4 md:mb-6"
+            className="text-5xl md:text-8xl font-sans font-bold tracking-tighter text-[#1d1d1f] mb-4 md:mb-6"
           >
             Light as air.
           </motion.h1>
@@ -117,9 +134,9 @@ export default function Home() {
               hidden: { opacity: 0, y: 30 },
               visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
             }}
-            className="text-xl md:text-3xl font-serif text-gray-400 italic font-light mb-8 md:mb-10"
+            className="text-xl md:text-3xl font-serif text-gray-400 italic font-light mb-8 md:mb-10 max-w-2xl mx-auto"
           >
-            The art of weightless elegance.
+            Premium Eucalyptus Leather. <br className="md:hidden" /> The art of weightless elegance.
           </motion.h2>
 
           {/* Foreground Ethereal Product - Tactile iPhone Swiper */}
@@ -139,23 +156,27 @@ export default function Home() {
                   key={currentIndex}
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={1}
+                  dragElastic={0.2}
                   onDragEnd={(_, info) => {
-                    if (info.offset.x > 100) {
+                    const threshold = 50;
+                    if (info.offset.x > threshold) {
                       setCurrentIndex((prev) => (prev - 1 + HERO_IMAGES.length) % HERO_IMAGES.length);
-                    } else if (info.offset.x < -100) {
+                    } else if (info.offset.x < -threshold) {
                       setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
                     }
                   }}
-                  initial={{ x: 300, opacity: 0, scale: 0.9 }}
+                  initial={{ x: 100, opacity: 0, scale: 0.95 }}
                   animate={{ x: 0, opacity: 1, scale: 1 }}
-                  exit={{ x: -300, opacity: 0, scale: 0.9 }}
+                  exit={{ x: -100, opacity: 0, scale: 0.95 }}
                   transition={{ 
-                    duration: 0.8, 
-                    ease: [0.16, 1, 0.3, 1],
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
                     opacity: { duration: 0.4 }
                   }}
-                  className="relative w-full h-full z-0 cursor-grab active:cursor-grabbing"
+                  className="relative w-full h-full z-0 cursor-grab active:cursor-grabbing touch-none"
+                  whileHover={{ scale: 1.02 }}
+                  style={{ opacity: currentIndex === 0 ? bagMergeProgress : 1 }}
                 >
                   <Image 
                     src={HERO_IMAGES[currentIndex]} 
@@ -163,8 +184,22 @@ export default function Home() {
                     fill 
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     quality={100}
-                    className="object-contain product-image select-none"
+                    className="object-contain product-image select-none pointer-events-none"
                     priority
+                  />
+                  {/* Liquid Glass Shine Effect */}
+                  <motion.div 
+                    animate={{ 
+                      x: ["-150%", "150%"],
+                      opacity: [0, 0.5, 0]
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      repeatDelay: 5,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] pointer-events-none z-10"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -172,9 +207,14 @@ export default function Home() {
               {/* Pagination indicator */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
                 {HERO_IMAGES.map((_, i) => (
-                  <div 
+                  <motion.div 
                     key={i} 
-                    className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-4 bg-black/60" : "w-1 bg-black/10"}`}
+                    animate={{ 
+                      width: i === currentIndex ? 24 : 6,
+                      backgroundColor: i === currentIndex ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.1)"
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="h-1.5 rounded-full"
                   />
                 ))}
               </div>
@@ -187,9 +227,14 @@ export default function Home() {
                visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: "easeOut" } }
              }}
           >
-            <Link href="/store" className="glass px-8 py-4 rounded-full flex items-center space-x-3 hover:bg-white/90 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.06)] active:scale-95 group capitalize">
-              <span className="text-[#1d1d1f] font-medium tracking-wide">Explore Store</span>
-              <ArrowRight size={18} className="text-[#1d1d1f] group-hover:translate-x-1 transition-transform" />
+            <Link href="/store" className="glass px-10 py-5 rounded-full flex items-center space-x-4 hover:bg-white/90 transition-all shadow-[0_15px_40px_rgba(0,0,0,0.08)] active:scale-95 group capitalize">
+              <span className="text-[#1d1d1f] text-lg font-bold tracking-tight">Explore the Collection</span>
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ArrowRight size={20} className="text-[#1d1d1f]" />
+              </motion.div>
             </Link>
           </motion.div>
         </motion.div>
@@ -210,7 +255,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full max-w-7xl mx-auto h-full my-auto">
               <div className="relative h-[35vh] md:h-[50vh] w-full flex-shrink-0 flex items-center justify-center">
                 <Image 
-                  src="/products/product_11.png" 
+                  src="/products/Aqua/aqr_v1.png" 
                   alt="Texture Detail" 
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -246,39 +291,39 @@ export default function Home() {
                 <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1d1d1f]">Designed differently.</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto">
-                <div className="col-span-1 md:col-span-2 bg-[#fbfbfd] rounded-[32px] p-10 flex flex-col items-start justify-between relative overflow-hidden group border border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-auto">
+                <div className="col-span-1 md:col-span-2 bg-[#fbfbfd] rounded-[32px] p-8 md:p-10 flex flex-col items-start justify-between relative overflow-hidden group border border-gray-100">
                   <div className="z-10 max-w-md">
                     <Droplets size={32} strokeWidth={1} className="text-[#1d1d1f] mb-4" />
                     <h4 className="text-2xl font-semibold mb-3 text-[#1d1d1f]">Fluid Dynamics.</h4>
                     <p className="text-gray-500 text-base leading-relaxed">Inspired by falling water. The seamless exterior masks a hyper-organized interior.</p>
                   </div>
-                  <div className="absolute right-[-5%] bottom-[-10%] w-[50%] h-full opacity-40 group-hover:scale-105 transition-transform duration-1000">
-                     <Image src="/products/product_3.png" alt="Fluid" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain product-image" />
+                  <div className="absolute right-[-10%] md:right-[-5%] bottom-[-20%] md:bottom-[-10%] w-[70%] md:w-[50%] h-full opacity-40 group-hover:scale-105 transition-transform duration-1000">
+                     <Image src="/products/Ember/ember_5.png" alt="Fluid" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain product-image" />
                   </div>
                 </div>
 
-                <div className="bg-[#1d1d1f] text-white rounded-[32px] p-10 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[300px]">
+                <div className="bg-[#1d1d1f] text-white rounded-[32px] p-8 md:p-10 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[250px] md:min-h-[300px]">
                   <Feather size={32} strokeWidth={1} className="text-white mb-4" />
                   <h4 className="text-2xl font-semibold mb-3">Zero Gravity.</h4>
                   <p className="text-gray-400 text-base leading-relaxed">Engineered to feel totally weightless.</p>
                 </div>
 
-                <div className="bg-[#fbfbfd] border border-gray-100 rounded-[32px] p-10 flex flex-col items-center justify-center text-center min-h-[300px]">
+                <div className="bg-[#fbfbfd] border border-gray-100 rounded-[32px] p-8 md:p-10 flex flex-col items-center justify-center text-center min-h-[250px] md:min-h-[300px]">
                   <Gem size={32} strokeWidth={1} className="text-[#1d1d1f] mb-4" />
-                  <h4 className="text-2xl font-semibold mb-3 text-[#1d1d1f]">Ethical Luxury.</h4>
-                  <p className="text-gray-500 text-base leading-relaxed">Sustainable organic derivatives.</p>
+                  <h4 className="text-2xl font-semibold mb-3 text-[#1d1d1f]">Premium Ethical Design.</h4>
+                  <p className="text-gray-500 text-base leading-relaxed">Plant-based Eucalyptus Leather.</p>
                 </div>
 
-                <div className="col-span-1 md:col-span-2 bg-white border border-gray-100 rounded-[32px] p-10 flex flex-col md:flex-row items-center justify-between">
-                   <div className="max-w-sm mb-6 md:mb-0">
-                     <h4 className="text-2xl font-semibold mb-3 text-[#1d1d1f]">Ready to feel it?</h4>
-                     <Link href="/store" className="inline-flex rounded-full bg-[#1d1d1f] text-white px-8 py-3 font-medium hover:scale-105 transition-transform">
+                <div className="col-span-1 md:col-span-2 bg-white border border-gray-100 rounded-[32px] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                   <div className="max-w-sm flex flex-col items-center md:items-start text-center md:text-left">
+                     <h4 className="text-2xl font-semibold mb-4 text-[#1d1d1f]">Ready to feel it?</h4>
+                     <Link href="/store" className="inline-flex rounded-full bg-[#1d1d1f] text-white px-10 py-4 font-bold hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-black/5">
                        Go to Store
                      </Link>
                    </div>
-                   <div className="relative w-full md:w-1/2 h-full min-h-[200px]">
-                       <Image src="/products/product_7.png" alt="Store" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain product-image" />
+                   <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto h-full min-h-[200px]">
+                       <Image src="/products/Terra/te1_v2.png" alt="Store" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain product-image" />
                    </div>
                 </div>
               </div>

@@ -9,6 +9,8 @@ import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "./CartProvider";
 import { WishlistProvider } from "./WishlistProvider";
 import CartDrawer from "./CartDrawer";
+import MobileBottomNav from "./MobileBottomNav";
+import PageTransition from "./PageTransition";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const [showSplash, setShowSplash] = useState(true);
@@ -30,10 +32,13 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
           <CartDrawer />
           
           <main className="flex-grow pt-16 min-h-screen">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
 
           <Footer />
+          <MobileBottomNav />
         </SmoothScroller>
       </CartProvider>
     </WishlistProvider>

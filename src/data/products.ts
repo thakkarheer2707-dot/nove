@@ -1,16 +1,174 @@
-export const products = Array.from({ length: 23 }).map((_, i) => {
-  const id = i + 1;
-  let collection = "Artisan Collection";
-  if (id <= 8) collection = "Terra Series";
-  else if (id <= 16) collection = "Midnight Series";
+export type ProductVariant = {
+  color: string;
+  images: string[];
+  price?: number;
+};
 
-  return {
-    id: String(id),
-    name: `NOVE ${collection.split(' ')[0]} ${String(id).padStart(2, '0')}`,
-    price: 5999 + (id % 5) * 1000,
-    image: `/products/product_${id}.png`,
-    colors: ['Silver', 'Midnight Black'],
-    collection: collection,
-    description: "Experience luxury with NOVE's glass-inspired aesthetics and premium craftsmanship."
+export type Product = {
+  id: string;
+  name: string;
+  basePrice: number;
+  description: string;
+  collection: string;
+  variants: ProductVariant[];
+  dimensions: {
+    height: string;
+    width: string;
+    depth: string;
+    capacity: string;
   };
-});
+};
+
+export const products: Product[] = [
+  {
+    id: "ember",
+    name: "NOVE Ember",
+    basePrice: 5999,
+    collection: "Ember Series",
+    description: "Inspired by the element of fire, the Ember represents pure strength and timeless ambition. Its fluid silhouette catches light with liquid-glass precision.",
+    dimensions: {
+      height: "18 cm",
+      width: "24 cm",
+      depth: "8 cm",
+      capacity: "Daily essentials + 8\" tablet"
+    },
+    variants: [
+      {
+        color: "Black",
+        images: [
+          "/products/Ember/Black/product_1.png",
+          "/products/Ember/Black/product_4.png",
+          "/products/Ember/Black/img1.jpeg",
+          "/products/Ember/Black/img2.jpeg",
+          "/products/Ember/Black/img3.jpeg",
+          "/products/Ember/Black/img4.jpeg",
+          "/products/Ember/Black/img5.jpeg"
+        ],
+        price: 5999
+      },
+      {
+        color: "Olive Green",
+        images: [
+          "/products/Ember/ember_5.png",
+          "/products/Ember/ember_2.png",
+          "/products/Ember/ember_3.png",
+          "/products/Ember/ember_4.png",
+          "/products/Ember/OliveGreen/img1.jpeg",
+          "/products/Ember/OliveGreen/img2.jpeg",
+          "/products/Ember/OliveGreen/img3.jpeg",
+          "/products/Ember/OliveGreen/img4.jpeg",
+          "/products/Ember/OliveGreen/img5.jpeg"
+        ],
+        price: 5999
+      }
+    ]
+  },
+  {
+    id: "aqua",
+    name: "NOVE Aqua",
+    basePrice: 5999,
+    collection: "Aqua Series",
+    description: "Inspired by the flow of water, the Aqua series represents pristine aesthetic and vibrant expression. A masterpiece of organic minimalism.",
+    dimensions: {
+      height: "20 cm",
+      width: "26 cm",
+      depth: "9 cm",
+      capacity: "Daily carry + Small notebook"
+    },
+    variants: [
+      {
+        color: "White",
+        images: [
+          "/products/Aqua/CherryWhite/aq_main.png",
+          "/products/Aqua/CherryWhite/img1.jpeg",
+          "/products/Aqua/CherryWhite/img2.jpeg",
+          "/products/Aqua/CherryWhite/img3.jpeg",
+          "/products/Aqua/CherryWhite/img4.jpeg",
+          "/products/Aqua/CherryWhite/img5.jpeg",
+          "/products/Aqua/CherryWhite/img6.jpeg"
+        ],
+        price: 5999
+      },
+      {
+        color: "Cherry Red",
+        images: ["/products/Aqua/aqr_v1.png", "/products/Aqua/aqua_1.jpeg", "/products/Aqua/aqua_2.jpeg", "/products/Aqua/aqua_5.jpeg"],
+        price: 5999
+      }
+    ]
+  },
+  {
+    id: "aero",
+    name: "NOVE Aero",
+    basePrice: 5999,
+    collection: "Aero Series",
+    description: "Inspired by the clarity of air, the Aero series represents effortless ease and modern minimalism. Deeply confident, quietly elegant.",
+    dimensions: {
+      height: "16 cm",
+      width: "22 cm",
+      depth: "7 cm",
+      capacity: "Evening essentials + Phone"
+    },
+    variants: [
+      {
+        color: "Black",
+        images: [
+          "/products/Aero/Black/ae_main.png",
+          "/products/Aero/Black/img1.jpeg",
+          "/products/Aero/Black/img2.jpeg",
+          "/products/Aero/Black/img3.jpeg",
+          "/products/Aero/Black/img4.jpeg",
+          "/products/Aero/Black/img5.jpeg"
+        ],
+        price: 5999
+      },
+      {
+        color: "Dusty Pink",
+        images: [
+          "/products/Aero/aero_4.jpeg",
+          "/products/Aero/aero_1.jpeg",
+          "/products/Aero/aero_3.jpeg",
+          "/products/Aero/aero_5.jpeg",
+          "/products/Aero/DustyPink/img1.jpeg",
+          "/products/Aero/DustyPink/img2.jpeg",
+          "/products/Aero/DustyPink/img3.jpeg",
+          "/products/Aero/DustyPink/img4.jpeg"
+        ],
+        price: 5999
+      }
+    ]
+  },
+  {
+    id: "terra",
+    name: "NOVE Terra",
+    basePrice: 5999,
+    collection: "Terra Series",
+    description: "Inspired by the grounding textures of earth, the Terra series represents clean lines and organic resilience. Crafted for the modern minimalist.",
+    dimensions: {
+      height: "28 cm",
+      width: "36 cm",
+      depth: "12 cm",
+      capacity: "Fits 13\" MacBook + Documents"
+    },
+    variants: [
+      {
+        color: "White",
+        images: [
+          "/products/Terra/White/img1.jpeg",
+          "/products/Terra/White/img2.jpeg",
+          "/products/Terra/White/img3.jpeg",
+          "/products/Terra/White/img4.jpeg"
+        ],
+        price: 5999
+      },
+      {
+        color: "Heather Brown",
+        images: [
+          "/products/Terra/HeatherBrown/f9951844-c074-4e39-8e0b-b2ab33c08f18.png",
+          "/products/Terra/HeatherBrown/IMG_3161.png",
+          "/products/Terra/HeatherBrown/IMG_3162.png"
+        ],
+        price: 5999
+      }
+    ]
+  }
+];

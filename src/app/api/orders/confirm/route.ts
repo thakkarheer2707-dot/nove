@@ -1,16 +1,40 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import supabase from "@/lib/supabase";
+import { getSession, decrypt } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
-    const { email, orderDetails } = await request.json();
+    const { email, orderDetails, integrityToken } = await request.json();
 
     if (!email || !orderDetails) {
       return NextResponse.json({ error: "Email and order details are required" }, { status: 400 });
     }
 
-    // 1. Save to Supabase
+    // 1. Security Check: Session or Integrity Token
+    const session = await getSession();
+    const isOnlinePayment = orderDetails.paymentMethod === "online" || orderDetails.paymentMethod === "Online";
+
+    if (isOnlinePayment) {
+      if (!integrityToken) {
+        return NextResponse.json({ error: "Payment integrity token missing. Checkout failed." }, { status: 403 });
+      }
+      try {
+        const payload = await decrypt(integrityToken);
+        if (payload.type !== "payment_verification" || !payload.verified) {
+          throw new Error("Invalid integrity token");
+        }
+      } catch (err) {
+        return NextResponse.json({ error: "Payment verification failed. Security breach detected." }, { status: 403 });
+      }
+    } else {
+      // For COD, require a logged-in session or at least valid email
+      if (!session && !email.includes("@")) {
+         return NextResponse.json({ error: "Authentication required for order placement." }, { status: 401 });
+      }
+    }
+
+    // 2. Save to Supabase
     const orderId = `NOVE-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
     const { data: order, error } = await supabase
@@ -23,69 +47,59 @@ export async function POST(request: Request) {
         items: orderDetails.items,
         shipping_address: orderDetails.shippingAddress,
         status: "Pending",
-        payment_method: orderDetails.paymentMethod === "cod" ? "Cash on Delivery" : "Online",
+        payment_method: isOnlinePayment ? "Online" : "Cash on Delivery",
+        user_id: session?.user?.id || null, // Associate with user if logged in
       })
       .select()
       .single();
 
     if (error || !order) {
       console.error("Supabase order insert error:", error);
-      return NextResponse.json({ error: "Failed to save order" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to save order. Please contact support." }, { status: 500 });
     }
 
-    // 2. Send Admin Notification Email
+    // 3. Send Admin Notification Email
     try {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.SMTP_EMAIL,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      });
+      if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD) {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
+          },
+        });
 
-      const itemsHtml = (order.items as Array<{ name: string; color: string; quantity: number; price: number }>)
-        .map(
-          (item) =>
-            `<li>${item.name} (${item.color}) - Qty: ${item.quantity} - ₹${(item.price * item.quantity).toLocaleString()}</li>`
-        )
-        .join("");
+        const itemsHtml = (order.items as any[])
+          .map(
+            (item) =>
+              `<li>${item.name} (${item.color}) - Qty: ${item.quantity} - ₹${(item.price * item.quantity).toLocaleString()}</li>`
+          )
+          .join("");
 
-      await transporter.sendMail({
-        from: `"NOVE Sales System" <${process.env.SMTP_EMAIL}>`,
-        to: process.env.SMTP_EMAIL, // Admin receives the notification
-        subject: `New Order Received: ${order.id}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-            <h2 style="color: #1a1a1a;">New Order Notification</h2>
-            <p>A new purchase has been finalized on the NOVE platform.</p>
-            
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Order ID:</strong> ${order.id}</p>
-              <p><strong>Customer:</strong> ${email}</p>
-              <p><strong>Payment Method:</strong> ${order.payment_method}</p>
-              <p><strong>Total Amount:</strong> ₹${(order.total as number).toLocaleString()}</p>
+        await transporter.sendMail({
+          from: `"NOVE Sales" <${process.env.SMTP_EMAIL}>`,
+          to: process.env.SMTP_EMAIL,
+          subject: `New Order Received: ${order.id}`,
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2>New Order: ${order.id}</h2>
+              <p>Customer: ${email}</p>
+              <p>Total: ₹${(order.total as number).toLocaleString()}</p>
+              <p>Payment: ${order.payment_method}</p>
+              <h3>Items:</h3>
+              <ul>${itemsHtml}</ul>
             </div>
-
-            <h3 style="border-bottom: 1px solid #eee; padding-bottom: 10px;">Order Details</h3>
-            <ul>${itemsHtml}</ul>
-
-            <p style="margin-top: 30px; font-size: 12px; color: #888;">This is an automated notification from your enterprise sales system.</p>
-          </div>
-        `,
-      });
-      console.log(`[MAIL] Admin notification sent for order ${order.id}`);
+          `,
+        });
+      }
     } catch (mailError) {
-      console.error("[MAIL ERROR] Failed to send admin notification:", mailError);
+      console.error("[MAIL] Failed to notify admin:", mailError);
     }
 
-    console.log(`[ORDER] Recorded order ${order.id} for ${email}`);
-
-    return NextResponse.json({
-      success: true,
-      orderId: order.id,
-    });
+    return NextResponse.json({ success: true, orderId: order.id });
   } catch (error) {
     console.error("Order confirmation error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+

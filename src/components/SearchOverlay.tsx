@@ -83,7 +83,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       >
                         <div className="relative w-24 h-24 bg-[#fbfbfd] rounded-2xl p-2 flex-shrink-0">
                           <Image 
-                            src={product.image} 
+                            src={product.variants[0].images[0]} 
                             alt={product.name} 
                             fill 
                             className="object-contain transition-transform group-hover:scale-110" 
@@ -92,7 +92,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div className="flex-1">
                           <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">{product.collection}</p>
                           <h3 className="text-lg font-medium text-[#1d1d1f] mb-1">{product.name}</h3>
-                          <p className="text-sm text-gray-400">₹{product.price.toLocaleString()}</p>
+                          <p className="text-sm text-gray-400">₹{(product.variants[0].price || product.basePrice).toLocaleString()}</p>
                         </div>
                         <ArrowRight size={20} className="text-gray-200 group-hover:text-[#1d1d1f] transition-colors" />
                       </Link>

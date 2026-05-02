@@ -51,8 +51,8 @@ export default function ProfilePage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#161617] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#fbfbfd] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-black/20 border-t-[#1d1d1f] rounded-full animate-spin" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#161617] text-white pt-24 pb-20 px-6">
+    <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] pt-24 pb-20 px-6">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -72,15 +72,15 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl font-serif mb-2 tracking-tight">Bonjour, {user.name.split(' ')[0]}</h1>
-            <p className="text-gray-400 font-light text-lg">Manage your NOVE experience and collection.</p>
+            <h1 className="text-5xl font-bold mb-2 tracking-tight">Bonjour, {user.name.split(' ')[0]}</h1>
+            <p className="text-gray-500 font-medium text-lg">Manage your NOVE experience and collection.</p>
           </motion.div>
           
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={handleLogout}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-widest font-medium"
+            className="flex items-center gap-2 text-gray-500 hover:text-[#1d1d1f] transition-colors text-sm uppercase tracking-widest font-bold"
           >
             Sign Out <LogOut size={16} />
           </motion.button>
@@ -94,23 +94,23 @@ export default function ProfilePage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-6"
           >
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] p-8">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-                <User size={32} className="text-white" />
+            <div className="bg-white border border-gray-200 rounded-[32px] p-8 shadow-sm">
+              <div className="w-16 h-16 bg-black/5 rounded-2xl flex items-center justify-center mb-6">
+                <User size={32} className="text-[#1d1d1f]" />
               </div>
-              <h3 className="text-lg font-medium mb-1">{user.name}</h3>
-              <p className="text-gray-400 text-sm font-light mb-6">{user.email}</p>
+              <h3 className="text-lg font-bold mb-1">{user.name}</h3>
+              <p className="text-gray-500 text-sm font-medium mb-6">{user.email}</p>
               
-              <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-medium transition-all">
+              <button className="w-full py-3 bg-black/5 hover:bg-black/10 rounded-xl text-sm font-bold transition-all">
                 Edit Profile
               </button>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] p-8">
-              <h3 className="text-sm uppercase tracking-widest text-gray-400 font-medium mb-4">Membership</h3>
+            <div className="bg-white border border-gray-200 rounded-[32px] p-8 shadow-sm">
+              <h3 className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4">Membership</h3>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                <span className="font-medium tracking-tight">NOVE Elite Status</span>
+                <span className="font-bold tracking-tight text-sm">NOVE Elite Status</span>
               </div>
             </div>
           </motion.div>
@@ -122,18 +122,18 @@ export default function ProfilePage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="md:col-span-2 space-y-6"
           >
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 min-h-[400px]">
+            <div className="bg-white border border-gray-200 rounded-[40px] p-10 min-h-[400px] shadow-sm">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-serif">Recent Orders</h2>
-                <span className="bg-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-tighter">
+                <h2 className="text-2xl font-bold tracking-tight">Recent Orders</h2>
+                <span className="bg-black/5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-gray-500">
                   {orders.length} TOTAL
                 </span>
               </div>
 
               {fetchingOrders ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-4">
-                  <div className="w-6 h-6 border-2 border-white/10 border-t-white rounded-full animate-spin" />
-                  <p className="text-gray-500 text-sm font-light">Retrieving your collection...</p>
+                  <div className="w-6 h-6 border-2 border-black/10 border-t-[#1d1d1f] rounded-full animate-spin" />
+                  <p className="text-gray-500 text-sm font-medium">Retrieving your collection...</p>
                 </div>
               ) : orders.length > 0 ? (
                 <div className="space-y-6">
@@ -147,40 +147,40 @@ export default function ProfilePage() {
                     >
                       <div 
                         onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
-                        className={`bg-white/[0.03] hover:bg-white/[0.08] border transition-all flex items-center justify-between p-6 cursor-pointer ${expandedOrder === order.id ? 'rounded-t-[32px] border-white/20 bg-white/[0.08]' : 'rounded-[32px] border-white/5'}`}
+                        className={`bg-[#fbfbfd] hover:bg-black/5 border transition-all flex items-center justify-between p-6 cursor-pointer ${expandedOrder === order.id ? 'rounded-t-[32px] border-gray-300' : 'rounded-[32px] border-gray-200'}`}
                       >
                         <div className="flex items-center gap-5">
-                          <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <ShoppingBag size={20} />
+                          <div className="w-12 h-12 bg-white rounded-2xl border border-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                            <ShoppingBag size={20} className="text-gray-700" />
                           </div>
                           <div>
                             <div className="flex items-center gap-3 mb-1">
-                              <h4 className="font-medium tracking-tight">Order #{order.id.slice(-6).toUpperCase()}</h4>
-                              <span className={`flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest font-bold border ${
-                                order.status === 'Delivered' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 
-                                order.status === 'Shipped' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 
-                                'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                              <h4 className="font-bold tracking-tight text-sm">Order #{order.id.slice(-6).toUpperCase()}</h4>
+                              <span className={`flex items-center gap-1.5 text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest font-bold border ${
+                                order.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' : 
+                                order.status === 'Shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' : 
+                                'bg-orange-50 text-orange-700 border-orange-200'
                               }`}>
                                 {order.status !== 'Delivered' && <span className="w-1 h-1 rounded-full bg-current animate-pulse" />}
                                 {order.status || 'Artisan Crafting'}
                               </span>
                             </div>
-                            <div className="text-[10px] text-gray-500 font-light uppercase tracking-widest flex items-center gap-4">
+                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-4">
                               <span>{order.date}</span>
-                              <span className="w-1 h-1 rounded-full bg-gray-800" />
+                              <span className="w-1 h-1 rounded-full bg-gray-300" />
                               <span>{order.paymentMethod}</span>
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-right">
-                             <div className="text-lg font-medium tracking-tighter">₹{order.total.toLocaleString('en-IN')}</div>
-                             <div className="text-[9px] text-gray-500 uppercase tracking-widest">{order.items.length} Items</div>
+                             <div className="text-lg font-bold tracking-tight">₹{order.total.toLocaleString('en-IN')}</div>
+                             <div className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">{order.items.length} Items</div>
                           </div>
                           <motion.div
                             animate={{ rotate: expandedOrder === order.id ? 90 : 0 }}
                           >
-                            <ChevronRight size={18} className="text-gray-600" />
+                            <ChevronRight size={18} className="text-gray-400" />
                           </motion.div>
                         </div>
                       </div>
@@ -191,24 +191,24 @@ export default function ProfilePage() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-white/[0.04] border-x border-b border-white/10 rounded-b-[32px]"
+                            className="overflow-hidden bg-[#fbfbfd] border-x border-b border-gray-300 rounded-b-[32px]"
                           >
-                            <div className="p-8">
-                               <h5 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-6">Artisan Journey</h5>
+                            <div className="p-8 border-t border-gray-200">
+                               <h5 className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-6">Artisan Journey</h5>
                                <OrderTimeline currentStatus={order.status || 'Artisan Crafting'} />
                                
-                               <div className="grid md:grid-cols-2 gap-8 mt-12 pt-8 border-t border-white/5">
+                               <div className="grid md:grid-cols-2 gap-8 mt-12 pt-8 border-t border-gray-200">
                                   <div>
-                                     <h5 className="text-xs text-white/40 uppercase tracking-widest mb-4">Destination</h5>
-                                     <p className="text-sm font-light text-gray-300 leading-relaxed">
+                                     <h5 className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">Destination</h5>
+                                     <p className="text-sm font-medium text-[#1d1d1f] leading-relaxed">
                                         {order.shippingAddress?.street}<br />
                                         {order.shippingAddress?.city}, {order.shippingAddress?.pincode}
                                      </p>
                                   </div>
                                   <div>
-                                     <h5 className="text-xs text-white/40 uppercase tracking-widest mb-4">Service</h5>
-                                     <div className="flex items-center gap-2 text-sm font-light text-gray-300">
-                                        <Truck size={14} className="text-gray-500" />
+                                     <h5 className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">Service</h5>
+                                     <div className="flex items-center gap-2 text-sm font-medium text-[#1d1d1f]">
+                                        <Truck size={16} className="text-gray-600" />
                                         <span>Concierge Shipping (2-4 Days)</span>
                                      </div>
                                   </div>
@@ -222,14 +222,14 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
-                    <Package size={40} className="text-gray-600" />
+                  <div className="w-20 h-20 bg-[#fbfbfd] border border-gray-100 rounded-full flex items-center justify-center mb-6">
+                    <Package size={32} className="text-gray-400" />
                   </div>
-                  <h3 className="text-xl font-serif mb-2">No orders yet</h3>
-                  <p className="text-gray-500 font-light mb-8 max-w-xs">Your NOVE journey begins with your first selection.</p>
+                  <h3 className="text-xl font-bold mb-2">No orders yet</h3>
+                  <p className="text-gray-500 font-medium mb-8 max-w-xs text-sm">Your NOVE journey begins with your first selection.</p>
                   <Link 
                     href="/store"
-                    className="bg-white text-black px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors"
+                    className="bg-[#1d1d1f] text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-black transition-colors"
                   >
                     Explore Collection
                   </Link>
@@ -238,13 +238,13 @@ export default function ProfilePage() {
             </div>
 
             {/* Wishlist Section */}
-            <div id="wishlist" className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 min-h-[300px]">
+            <div id="wishlist" className="bg-white border border-gray-200 rounded-[40px] p-10 min-h-[300px] shadow-sm">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                  <Heart size={24} className="text-white" />
-                  <h2 className="text-2xl font-serif">Artisan Wishlist</h2>
+                  <Heart size={24} className="text-[#1d1d1f]" />
+                  <h2 className="text-2xl font-bold tracking-tight">Artisan Wishlist</h2>
                 </div>
-                <span className="bg-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-tighter">
+                <span className="bg-black/5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-gray-500">
                   {wishlist.length} ITEMS
                 </span>
               </div>
@@ -252,24 +252,24 @@ export default function ProfilePage() {
               {wishlist.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {wishlist.map((item) => (
-                    <div key={item.id} className="group bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 rounded-3xl p-4 transition-all flex items-center gap-4">
-                       <div className="relative w-16 h-20 bg-white/5 rounded-2xl p-2 flex-shrink-0">
+                    <div key={item.id} className="group bg-[#fbfbfd] hover:bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm rounded-3xl p-4 transition-all flex items-center gap-4">
+                       <div className="relative w-16 h-20 bg-white border border-gray-50 rounded-2xl p-2 flex-shrink-0">
                           <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
                        </div>
                        <div className="flex-1">
-                          <h4 className="text-sm font-light text-white mb-1 line-clamp-1">{item.name}</h4>
-                          <p className="text-xs text-gray-500">₹{item.price.toLocaleString()}</p>
+                          <h4 className="text-sm font-bold text-[#1d1d1f] mb-1 line-clamp-1">{item.name}</h4>
+                          <p className="text-xs font-medium text-gray-500">₹{item.price.toLocaleString()}</p>
                        </div>
                        <div className="flex flex-col gap-2">
                           <button 
                             onClick={() => removeFromWishlist(item.id)}
-                            className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                            className="p-2 bg-white border border-gray-100 rounded-full text-gray-400 hover:text-red-500 transition-colors"
                           >
                              <Trash2 size={14} />
                           </button>
                           <Link 
                             href={`/product/${item.id}`}
-                            className="p-2 text-gray-500 hover:text-white transition-colors"
+                            className="p-2 bg-[#1d1d1f] text-white rounded-full hover:bg-black transition-colors flex items-center justify-center"
                           >
                              <ArrowRight size={14} />
                           </Link>
@@ -279,8 +279,8 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Heart size={32} className="text-gray-700 mb-4" />
-                  <p className="text-gray-500 text-sm font-light">Your wishlist is waiting for its first masterpiece.</p>
+                  <Heart size={32} className="text-gray-300 mb-4" />
+                  <p className="text-gray-500 text-sm font-medium">Your wishlist is waiting for its first masterpiece.</p>
                 </div>
               )}
             </div>

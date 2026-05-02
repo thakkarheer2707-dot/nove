@@ -8,7 +8,7 @@ import Link from "next/link";
 const FAQS = [
   {
     question: "What makes NOVE bags different from traditional luxury brands?",
-    answer: "NOVE focuses on 'Liquid Glass' aesthetics — a design philosophy where structure and fluidity meet. We use high-grade organic eucalyptus leather and innovative glass-derivative composites to create bags that are incredibly durable, sustainable, and lightweight."
+    answer: "NOVE focuses on 'Liquid Glass' aesthetics — a design philosophy where structure and fluidity meet. We use high-grade organic eucalyptus leather and reinforced plant-based polymers to create bags that are incredibly durable, sustainable, and lightweight."
   },
   {
     question: "Do you ship internationally?",

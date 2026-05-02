@@ -37,15 +37,16 @@ export default function CartDrawer() {
 
   // Shipping State
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [address, setAddress] = useState({ street: "", city: "", pincode: "" });
+  const [address, setAddress] = useState({ street: "", city: "", pincode: "", phone: "" });
 
-  const recordOrder = async (orderEmail: string) => {
+  const recordOrder = async (orderEmail: string, integrityToken?: string) => {
     try {
       await fetch("/api/orders/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: orderEmail,
+          integrityToken,
           orderDetails: {
             total: cartTotal,
             items: items,
@@ -63,7 +64,7 @@ export default function CartDrawer() {
     if (items.length === 0) return;
 
     // First validate if we have address
-    if (!address.street || !address.city || !address.pincode) {
+    if (!address.street || !address.city || !address.pincode || !address.phone) {
       setShowAddressForm(true);
       return;
     }
@@ -88,7 +89,16 @@ export default function CartDrawer() {
 
       if (order._isDemoMode) {
         await new Promise((r) => setTimeout(r, 1400));
-        if (user) await recordOrder(user.email);
+        // For demo mode, we might need a dummy token if the server requires it, 
+        // but usually we'll handle it in the verify API
+        const verifyRes = await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ razorpay_order_id: order.id, razorpay_payment_id: "demo", razorpay_signature: "demo" }),
+        });
+        const verifyData = await verifyRes.json();
+        
+        if (user) await recordOrder(user.email, verifyData.integrityToken);
         setIsProcessing(false);
         setPaymentSuccess(true);
         if (clearCart) clearCart();
@@ -114,7 +124,7 @@ export default function CartDrawer() {
           });
           const result = await verifyRes.json();
           if (result.success) {
-            if (user) await recordOrder(user.email);
+            if (user) await recordOrder(user.email, result.integrityToken);
             setPaymentSuccess(true);
             if (clearCart) clearCart();
           }
@@ -137,6 +147,7 @@ export default function CartDrawer() {
       setIsProcessing(false);
     }
   };
+
 
   const handleSendOtp = async () => {
     if (!email.includes("@")) {
@@ -200,7 +211,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsCartOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
           />
 
           <motion.div
@@ -208,7 +219,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", bounce: 0, duration: 0.5 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#161617]/95 backdrop-blur-3xl border-l border-white/10 z-50 flex flex-col shadow-2xl"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#fbfbfd]/95 backdrop-blur-3xl border-l border-black/5 z-50 flex flex-col shadow-2xl"
           >
             {/* ── Payment Success Overlay ── */}
             <AnimatePresence>
@@ -216,7 +227,7 @@ export default function CartDrawer() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="absolute inset-0 bg-[#161617] z-30 flex flex-col items-center justify-center text-center p-10"
+                  className="absolute inset-0 bg-[#fbfbfd] z-30 flex flex-col items-center justify-center text-center p-10"
                 >
                   <motion.div
                     initial={{ scale: 0 }}
@@ -224,26 +235,26 @@ export default function CartDrawer() {
                     transition={{ delay: 0.2, type: "spring", stiffness: 220 }}
                     className="mb-8"
                   >
-                    <CheckCircle size={72} strokeWidth={1} className="text-white" />
+                    <CheckCircle size={72} strokeWidth={1} className="text-[#1d1d1f]" />
                   </motion.div>
-                  <h2 className="text-3xl font-light text-white mb-3 tracking-tight">Order Placed!</h2>
-                  <p className="text-gray-400 font-light mb-8 leading-relaxed">
+                  <h2 className="text-3xl font-bold text-[#1d1d1f] mb-3 tracking-tight">Order Placed!</h2>
+                  <p className="text-gray-500 font-medium mb-8 leading-relaxed">
                     Welcome to the world of NOVE.<br />Your masterpiece is on its way.
                   </p>
                   
                   {paymentMethod === "cod" && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-10 w-full text-left flex items-start space-x-4">
-                      <Truck size={24} className="text-white flex-shrink-0" />
+                    <div className="bg-white border border-black/5 shadow-sm rounded-2xl p-5 mb-10 w-full text-left flex items-start space-x-4">
+                      <Truck size={24} className="text-[#1d1d1f] flex-shrink-0" />
                       <div>
-                        <h4 className="text-white font-medium mb-1">Cash on Delivery</h4>
-                        <p className="text-sm text-gray-400 leading-snug">Please keep exact change ready. You will pay ₹{cartTotal.toLocaleString()} at the time of delivery.</p>
+                        <h4 className="text-[#1d1d1f] font-bold mb-1">Cash on Delivery</h4>
+                        <p className="text-sm text-gray-500 leading-snug">Please keep exact change ready. You will pay ₹{cartTotal.toLocaleString()} at the time of delivery.</p>
                       </div>
                     </div>
                   )}
 
                   <button
                     onClick={() => { setPaymentSuccess(false); setIsCartOpen(false); }}
-                    className="px-10 py-4 bg-white text-[#161617] rounded-full font-medium hover:bg-gray-200 transition-colors w-full"
+                    className="px-10 py-4 bg-[#1d1d1f] text-white rounded-full font-bold hover:bg-black transition-colors w-full shadow-lg shadow-black/10"
                   >
                     Continue Shopping
                   </button>
@@ -258,17 +269,17 @@ export default function CartDrawer() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute inset-0 bg-[#161617] z-40 flex flex-col p-8"
+                  className="absolute inset-0 bg-[#fbfbfd] z-40 flex flex-col p-8"
                 >
-                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/10 pt-2">
-                    <h2 className="text-xl font-light text-white tracking-widest uppercase">Delivery Details</h2>
-                    <button onClick={() => setShowAddressForm(false)} className="text-gray-400 hover:text-white transition-colors">
+                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-black/5 pt-2">
+                    <h2 className="text-xl font-bold text-[#1d1d1f] tracking-widest uppercase">Delivery Details</h2>
+                    <button onClick={() => setShowAddressForm(false)} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full">
                       <X size={20} />
                     </button>
                   </div>
 
                   <div className="flex-1 space-y-8">
-                     <p className="text-gray-400 font-light text-sm leading-relaxed">
+                     <p className="text-gray-500 font-medium text-sm leading-relaxed">
                         Where should we dispatch your NOVE artisan selections? Please provide a precise destination.
                      </p>
 
@@ -279,7 +290,7 @@ export default function CartDrawer() {
                           placeholder="Ex: 123 Luxury Lane, Suite 402"
                           value={address.street}
                           onChange={(e) => setAddress({...address, street: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-gray-600 focus:border-white focus:outline-none transition-colors"
+                          className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
                         />
                      </div>
 
@@ -291,7 +302,7 @@ export default function CartDrawer() {
                             placeholder="MUMBAI"
                             value={address.city}
                             onChange={(e) => setAddress({...address, city: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-gray-600 focus:border-white focus:outline-none transition-colors"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
                            />
                         </div>
                         <div>
@@ -302,21 +313,32 @@ export default function CartDrawer() {
                             maxLength={6}
                             value={address.pincode}
                             onChange={(e) => setAddress({...address, pincode: e.target.value.replace(/\D/g, '')})}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-gray-600 focus:border-white focus:outline-none transition-colors tracking-[0.2em]"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all tracking-[0.2em] shadow-sm"
                            />
                         </div>
+                     </div>
+
+                     <div>
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Mobile Number</label>
+                        <input 
+                          type="tel"
+                          placeholder="Ex: 9876543210"
+                          value={address.phone}
+                          onChange={(e) => setAddress({...address, phone: e.target.value.replace(/\D/g, '')})}
+                          className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all tracking-[0.1em] shadow-sm"
+                        />
                      </div>
 
                      <div className="pt-8">
                         <button
                           onClick={() => {
-                            if (address.street && address.city && address.pincode.length >= 6) {
+                            if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10) {
                               setShowAddressForm(false);
                             } else {
-                              alert("Please complete every field accurately.");
+                              alert("Please complete every field accurately (ensure valid pincode and phone number).");
                             }
                           }}
-                          className="w-full bg-white text-[#161617] py-5 rounded-full font-bold hover:bg-gray-200 transition-colors shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                          className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98]"
                         >
                           Save & Continue to Payment
                         </button>
@@ -333,32 +355,32 @@ export default function CartDrawer() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="absolute inset-0 bg-[#161617] z-20 flex flex-col p-6"
+                  className="absolute inset-0 bg-[#fbfbfd] z-20 flex flex-col p-8"
                 >
-                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/10 pt-2">
-                    <h2 className="text-xl font-light text-white tracking-widest uppercase">Secure Verification</h2>
-                    <button onClick={() => { setAuthStep("idle"); setAuthError(""); }} className="text-gray-400 hover:text-white transition-colors">
+                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-black/5 pt-2">
+                    <h2 className="text-xl font-bold text-[#1d1d1f] tracking-widest uppercase">Secure Verification</h2>
+                    <button onClick={() => { setAuthStep("idle"); setAuthError(""); }} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full">
                       <X size={20} />
                     </button>
                   </div>
 
                   <div className="flex-1">
-                    {authError && <p className="text-red-400 text-sm mb-6 bg-red-400/10 p-4 rounded-xl">{authError}</p>}
+                    {authError && <p className="text-red-600 text-sm mb-6 bg-red-50 p-4 rounded-xl border border-red-100">{authError}</p>}
 
                     {authStep === "email" && (
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        <p className="text-gray-400 font-light mb-8 text-sm">
+                        <p className="text-gray-500 font-medium mb-8 text-sm leading-relaxed">
                           To place a Cash on Delivery order, we need to verify your email address. We will send a secure 6-digit code.
                         </p>
                         
-                        <label className="text-sm text-gray-400 block mb-2 font-medium">Email Address</label>
+                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2 font-bold">Email Address</label>
                         <div className="relative mb-8">
                           <input
                             type="email"
                             placeholder="you@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pl-12 text-white placeholder:text-gray-600 focus:border-white focus:outline-none transition-colors"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
                           />
                           <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         </div>
@@ -366,20 +388,20 @@ export default function CartDrawer() {
                         <button
                           onClick={handleSendOtp}
                           disabled={isProcessing}
-                          className="w-full bg-white text-[#161617] py-4 rounded-full font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                          className="w-full bg-[#1d1d1f] text-white py-4 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                          {isProcessing ? <span className="w-4 h-4 border-2 border-gray-400 border-t-[#161617] rounded-full animate-spin" /> : "Send Authentication Code"}
+                          {isProcessing ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : "Send Authentication Code"}
                         </button>
                       </motion.div>
                     )}
 
                     {authStep === "otp" && (
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        <p className="text-gray-400 font-light mb-8 text-sm">
-                          Enter the 6-digit code sent to <span className="text-white font-medium">{email}</span>.
+                        <p className="text-gray-500 font-medium mb-8 text-sm leading-relaxed">
+                          Enter the 6-digit code sent to <span className="text-[#1d1d1f] font-bold">{email}</span>.
                         </p>
                         
-                        <label className="text-sm text-gray-400 block mb-2 font-medium">Authentication Code</label>
+                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2 font-bold">Authentication Code</label>
                         <div className="relative mb-8">
                           <input
                             type="text"
@@ -387,7 +409,7 @@ export default function CartDrawer() {
                             maxLength={6}
                             value={otp}
                             onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pl-12 text-white placeholder:text-gray-600 focus:border-white focus:outline-none transition-colors tracking-[0.5em] font-medium"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all tracking-[0.5em] font-bold shadow-sm"
                           />
                           <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         </div>
@@ -395,12 +417,12 @@ export default function CartDrawer() {
                         <button
                           onClick={handleVerifyOtp}
                           disabled={isProcessing || otp.length < 4}
-                          className="w-full bg-white text-[#161617] py-4 rounded-full font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                          className="w-full bg-[#1d1d1f] text-white py-4 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                          {isProcessing ? <span className="w-4 h-4 border-2 border-gray-400 border-t-[#161617] rounded-full animate-spin" /> : "Verify & Place Order"}
+                          {isProcessing ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : "Verify & Place Order"}
                         </button>
                         
-                        <button onClick={() => setAuthStep("email")} className="w-full text-center text-sm text-gray-500 mt-6 hover:text-white transition-colors">
+                        <button onClick={() => setAuthStep("email")} className="w-full text-center text-sm text-gray-500 mt-6 hover:text-[#1d1d1f] transition-colors font-medium">
                           Typo in email? Go back.
                         </button>
                       </motion.div>
@@ -411,42 +433,45 @@ export default function CartDrawer() {
             </AnimatePresence>
 
             {/* ── Header ── */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-xl font-light text-white tracking-widest uppercase">Your Bag</h2>
+            <div className="flex items-center justify-between p-8 border-b border-black/5 pt-10">
+              <h2 className="text-2xl font-bold text-[#1d1d1f] tracking-tight">Your Bag.</h2>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="p-2 text-gray-400 hover:text-white transition-colors"
+                className="p-2 text-gray-400 hover:text-[#1d1d1f] bg-black/5 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* ── Cart Items ── */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-8 space-y-8">
               {items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <p className="font-light tracking-wide">Your bag is empty.</p>
+                <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-black/5 flex items-center justify-center">
+                    <Trash2 size={24} className="text-gray-400" />
+                  </div>
+                  <p className="font-medium tracking-wide">Your bag is empty.</p>
                 </div>
               ) : (
                 items.map((item) => (
-                  <div key={`${item.id}-${item.color}`} className="flex space-x-4">
-                    <div className="relative w-24 h-28 bg-white/5 rounded-2xl p-2 flex-shrink-0">
+                  <div key={`${item.id}-${item.color}`} className="flex space-x-6">
+                    <div className="relative w-28 h-32 bg-white rounded-[20px] p-2 flex-shrink-0 shadow-sm border border-black/5">
                       <Image src={item.image} alt={item.name} fill className="object-contain" />
                     </div>
-                    <div className="flex-1 flex flex-col py-1">
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-white font-light text-sm tracking-wide leading-snug">{item.name}</h3>
+                    <div className="flex-1 flex flex-col py-1 justify-center">
+                      <div className="flex justify-between items-start mb-1">
+                        <h3 className="text-[#1d1d1f] font-semibold text-base tracking-tight leading-snug">{item.name}</h3>
                         <button
                           onClick={() => removeFromCart(item.id, item.color)}
-                          className="text-gray-500 hover:text-red-400 transition-colors ml-2 flex-shrink-0"
+                          className="text-gray-400 hover:text-red-500 transition-colors ml-2 flex-shrink-0"
                         >
                           <Trash2 size={16} />
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">{item.color}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-3">{item.color}</p>
                       <div className="mt-auto flex justify-between items-center text-sm">
-                        <span className="text-gray-400">Qty: {item.quantity}</span>
-                        <span className="text-white font-medium">₹{(item.price * item.quantity).toLocaleString()}</span>
+                        <span className="text-gray-500 font-medium">Qty: {item.quantity}</span>
+                        <span className="text-[#1d1d1f] font-bold">₹{(item.price * item.quantity).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -456,67 +481,67 @@ export default function CartDrawer() {
 
             {/* ── Checkout Footer ── */}
             {items.length > 0 && (
-              <div className="p-6 border-t border-white/10 bg-[#161617]">
+              <div className="p-8 border-t border-black/5 bg-white">
                 
                 {/* Payment Method Selector */}
                 <div className="mb-6 space-y-3">
                   <button 
                     onClick={() => setPaymentMethod("online")}
-                    className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-colors ${
-                      paymentMethod === "online" ? "border-white bg-white/10" : "border-white/15 bg-transparent hover:border-white/30"
+                    className={`w-full flex items-center justify-between p-4 rounded-[20px] border transition-all ${
+                      paymentMethod === "online" ? "border-[#1d1d1f] bg-black/5 shadow-sm" : "border-gray-200 bg-transparent hover:border-gray-300"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <CreditCard size={20} className={paymentMethod === "online" ? "text-white" : "text-gray-400"} />
-                      <span className={`text-sm font-medium ${paymentMethod === "online" ? "text-white" : "text-gray-400"}`}>Pay Online (UPI/Cards)</span>
+                      <CreditCard size={20} className={paymentMethod === "online" ? "text-[#1d1d1f]" : "text-gray-400"} />
+                      <span className={`text-sm font-bold ${paymentMethod === "online" ? "text-[#1d1d1f]" : "text-gray-500"}`}>Pay Online (UPI/Cards)</span>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "online" ? "border-white" : "border-gray-500"}`}>
-                      {paymentMethod === "online" && <div className="w-2 h-2 rounded-full bg-white" />}
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "online" ? "border-[#1d1d1f]" : "border-gray-300"}`}>
+                      {paymentMethod === "online" && <div className="w-2 h-2 rounded-full bg-[#1d1d1f]" />}
                     </div>
                   </button>
 
                   <button 
                     onClick={() => setPaymentMethod("cod")}
-                    className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-colors ${
-                      paymentMethod === "cod" ? "border-white bg-white/10" : "border-white/15 bg-transparent hover:border-white/30"
+                    className={`w-full flex items-center justify-between p-4 rounded-[20px] border transition-all ${
+                      paymentMethod === "cod" ? "border-[#1d1d1f] bg-black/5 shadow-sm" : "border-gray-200 bg-transparent hover:border-gray-300"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <Truck size={20} className={paymentMethod === "cod" ? "text-white" : "text-gray-400"} />
-                      <span className={`text-sm font-medium ${paymentMethod === "cod" ? "text-white" : "text-gray-400"}`}>Cash on Delivery</span>
+                      <Truck size={20} className={paymentMethod === "cod" ? "text-[#1d1d1f]" : "text-gray-400"} />
+                      <span className={`text-sm font-bold ${paymentMethod === "cod" ? "text-[#1d1d1f]" : "text-gray-500"}`}>Cash on Delivery</span>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "cod" ? "border-white" : "border-gray-500"}`}>
-                      {paymentMethod === "cod" && <div className="w-2 h-2 rounded-full bg-white" />}
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "cod" ? "border-[#1d1d1f]" : "border-gray-300"}`}>
+                      {paymentMethod === "cod" && <div className="w-2 h-2 rounded-full bg-[#1d1d1f]" />}
                     </div>
                   </button>
                 </div>
 
-                <div className="flex justify-between text-white mb-6">
-                  <span className="font-light text-gray-400">Total</span>
-                  <span className="font-semibold text-xl">₹{cartTotal.toLocaleString()}</span>
+                <div className="flex justify-between text-[#1d1d1f] mb-6">
+                  <span className="font-medium text-gray-500">Total</span>
+                  <span className="font-bold text-2xl tracking-tight">₹{cartTotal.toLocaleString()}</span>
                 </div>
                 
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
-                  className="w-full bg-white text-[#161617] py-4 rounded-full flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors disabled:opacity-60 font-medium"
+                  className="w-full bg-[#1d1d1f] text-white py-5 rounded-full flex items-center justify-center gap-3 hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-60 font-bold"
                 >
                   {isProcessing ? (
                     <>
-                      <span className="w-4 h-4 border-2 border-gray-400 border-t-[#161617] rounded-full animate-spin" />
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                       Processing…
                     </>
                   ) : (
                     <>
-                      {paymentMethod === "online" ? <ShieldCheck size={17} /> : <Truck size={17} />}
-                      <span className="uppercase tracking-widest text-sm">
+                      {paymentMethod === "online" ? <ShieldCheck size={18} /> : <Truck size={18} />}
+                      <span className="tracking-wide text-sm">
                         {paymentMethod === "online" ? "Secure Checkout" : "Continue to Verify"}
                       </span>
-                      <ArrowRight size={16} />
+                      <ArrowRight size={18} />
                     </>
                   )}
                 </button>
-                <p className="text-center text-[10px] text-gray-500 uppercase tracking-widest mt-4">
+                <p className="text-center text-[10px] text-gray-400 uppercase tracking-widest mt-6 font-bold">
                   {paymentMethod === "online" ? "256-bit SSL Encrypted · Powered by Razorpay" : "Identity verification required for COD"}
                 </p>
               </div>
@@ -527,4 +552,3 @@ export default function CartDrawer() {
     </AnimatePresence>
   );
 }
-

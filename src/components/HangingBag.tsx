@@ -1,24 +1,26 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useTransform, MotionValue } from "framer-motion";
 import Image from "next/image";
-import { useState, useRef, RefObject } from "react";
+import { useState, useRef, useEffect, RefObject } from "react";
 
 // Bag natural viewport-Y center when fixed: top-4px + 190px thread + 135px (half of 270px bag)
 const BAG_NATURAL_Y = 4 + 190 + 135; // ≈ 329px
 
 // Scroll position at which the arc landing is complete
-const LAND_SCROLL = 1400;
+const LAND_SCROLL = 500;
 
 export default function HangingBag({
   onDropComplete,
   cardRef,
+  scrollYValue,
 }: {
   onDropComplete?: () => void;
   cardRef?: RefObject<HTMLDivElement | null>;
+  scrollYValue: MotionValue<number>;
 }) {
-  const { scrollY } = useScroll();
   const [hasDropped, setHasDropped] = useState(false);
+  const smooth = scrollYValue;
 
   // Measured once when entrance animation finishes (scroll is 0 at this moment)
   const landPageY = useRef(700);  // PAGE-coordinate Y of bag center destination
@@ -27,25 +29,24 @@ export default function HangingBag({
   const measureCard = () => {
     if (!cardRef?.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    // scroll is ~0 here, so getBoundingClientRect().bottom ≈ page bottom of card
-
-    // X: align bag center with card center (both centered → delta ≈ 0)
+    
+    // X: align bag center with card center
     landDeltaX.current = rect.left + rect.width / 2 - window.innerWidth / 2;
 
-    // Y: place bag CENTER just below the card bottom with a small gap
-    const gapBelow = 40;
-    landPageY.current = rect.bottom + gapBelow + 135; // +135 = half bag height
+    // Y: place bag CENTER exactly at the card center
+    // Since this is called at scroll 0, rect.top is the page-coordinate
+    landPageY.current = rect.top + rect.height / 2;
   };
 
-  const smooth = useSpring(scrollY, { stiffness: 60, damping: 20, restDelta: 0.001 });
+  // Use the shared springed value passed from parent
 
   // ─── Unified Y transform ──────────────────────────────────────────────────
   // Phase 1 (0 → LAND_SCROLL): arc from hanging position down to below card
   // Phase 2 (LAND_SCROLL+):    bag tracks page scroll → appears to stay on the page
   const bagY = useTransform(smooth, (s) => {
     if (s <= LAND_SCROLL) {
-      // Arc: 0→480 swing left (no Y change), 480→LAND_SCROLL descend toward target
-      const progress = s <= 480 ? 0 : (s - 480) / (LAND_SCROLL - 480);
+      // Arc: 0→100 swing left (no Y change), 100→LAND_SCROLL descend toward target
+      const progress = s <= 100 ? 0 : (s - 100) / (LAND_SCROLL - 100);
       // At LAND_SCROLL, the card has scrolled up by LAND_SCROLL px,
       // so the target viewport Y = landPageY - LAND_SCROLL
       // The bag transform Y needed = target viewport Y - BAG_NATURAL_Y
@@ -59,31 +60,49 @@ export default function HangingBag({
     }
   });
 
+  const [responsiveValues, setResponsiveValues] = useState({ swingX: -440, bagSize: 210 });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      setResponsiveValues({
+        swingX: isMobile ? -window.innerWidth * 0.4 : -440,
+        bagSize: isMobile ? 180 : 210,
+      });
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const { swingX, bagSize } = responsiveValues;
+
   // ─── X: swing left then arc to card center ────────────────────────────────
   const bagX = useTransform(smooth, (s) => {
     const clamped = Math.max(0, Math.min(LAND_SCROLL, s));
-    if (clamped <= 480) {
-      // Swing left 0 → -440
-      return (clamped / 480) * -440;
+    if (clamped <= 100) {
+      // Swing left
+      return (clamped / 100) * swingX;
     } else {
-      // Arc back: -440 → landDeltaX (≈ 0)
-      const p = (clamped - 480) / (LAND_SCROLL - 480);
-      return -440 + p * (440 + landDeltaX.current);
+      // Arc back: swingX → landDeltaX (≈ 0)
+      const p = (clamped - 100) / (LAND_SCROLL - 100);
+      return swingX + p * (Math.abs(swingX) + landDeltaX.current);
     }
   });
 
   // ─── Scale ────────────────────────────────────────────────────────────────
-  // Full size while swinging, stays full size when resting below card
   const bagScale = useTransform(smooth, [0, LAND_SCROLL], [1, 1]);
 
   // ─── Opacity ──────────────────────────────────────────────────────────────
-  // Stays at 1 permanently — no fade out
-  const bagOpacity = useTransform(smooth, [0, 1], [1, 1]);
+  // Fade out ONLY once the bag has reached its target (LAND_SCROLL = 500)
+  // Matches the [500, 650] window in page.tsx for a "placing" sequence
+  const bagOpacity = useTransform(smooth, [500, 650], [1, 0]);
 
   // ─── Thread ───────────────────────────────────────────────────────────────
-  const threadHeight  = useTransform(smooth, [0, 480, 1200], [190, 190, 0]);
-  const threadOpacity = useTransform(smooth, [0, 480, 1100], [1, 1, 0]);
-  const threadRotate  = useTransform(smooth, [0, 480, 900], [0, -14, 0]);
+  const threadHeight  = useTransform(smooth, [0, 100, 800], [190, 190, 0]);
+  const threadOpacity = useTransform(smooth, [0, 100, 750], [1, 1, 0]);
+  const threadRotate  = useTransform(smooth, [0, 100, 600], [0, -14, 0]);
 
   // ─── Pendulum sway fades as bag starts its descent ───────────────────────
   const swayOpacity = useTransform(smooth, [400, 750], [1, 0]);
@@ -109,7 +128,7 @@ export default function HangingBag({
         onAnimationComplete={() => {
           if (!hasDropped) {
             setHasDropped(true);
-            measureCard(); // measure once — before user scrolls
+            measureCard(); 
             onDropComplete?.();
           }
         }}
@@ -131,17 +150,19 @@ export default function HangingBag({
             rotate: threadRotate,
             willChange: "transform",
           }}
-          className="relative w-[270px] h-[270px] mt-[-8px]"
+          className="relative mt-[-8px]"
+          transition={{ duration: 0.1 }}
         >
           <motion.div
-            style={{ opacity: swayOpacity }}
-            className="pendulum-sway w-full h-full relative"
+            style={{ opacity: swayOpacity, width: bagSize, height: bagSize }}
+            className="pendulum-sway relative"
           >
             <div className="relative w-full h-full drop-shadow-[0_20px_40px_rgba(0,0,0,0.07)]">
               <Image
-                src="/products/product_1.png"
+                src="/products/Ember/ember_v3.png"
                 alt="Hanging Masterpiece"
                 fill
+                sizes="(max-width: 768px) 180px, 270px"
                 className="object-contain"
                 priority
               />

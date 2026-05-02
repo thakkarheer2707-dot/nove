@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 
 // Massive offsets to ensure it looks like a cloud of parts, not a bag
@@ -47,6 +47,17 @@ export default function ArtisanAnatomy() {
     target: containerRef,
     offset: ["start start", "end end"]
   });
+
+  const [mobileFactor, setMobileFactor] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMobileFactor(window.innerWidth < 768 ? 0.35 : 1);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Background state transitions - forced to start dark
   const bgOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0.8, 1, 1, 0]);
@@ -103,24 +114,24 @@ export default function ArtisanAnatomy() {
             >
                <div className="relative w-[280px] h-[180px] md:w-[600px] md:h-[400px]">
                   <Image 
-                    src="/products/product_7.png" 
+                    src="/products/Terra/terra_3.png" 
                     alt="Finished NOVE" 
                     fill
+                    sizes="(max-width: 768px) 280px, 600px"
                     className="object-contain" 
                     priority 
                   />
                </div>
             </motion.div>
 
-            {/* Exploding Parts - RESPONSIVE SCATTER */}
-            {PARTS.map((part) => {
-               // Adjust offsets for mobile viewports
-               const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-               const mobileFactor = isMobile ? 0.4 : 1; 
-
-               const x = useTransform(scrollYProgress, [0.05, 0.6], [part.initialX * mobileFactor, 0], { clamp: true });
-               const y = useTransform(scrollYProgress, [0.05, 0.6], [part.initialY * mobileFactor, 0], { clamp: true });
-               const rotate = useTransform(scrollYProgress, [0.05, 0.6], [part.rotation, 0], { clamp: true });
+             {PARTS.map((part) => {
+               const rawX = useTransform(scrollYProgress, [0.05, 0.6], [part.initialX * mobileFactor, 0], { clamp: true });
+               const rawY = useTransform(scrollYProgress, [0.05, 0.6], [part.initialY * mobileFactor, 0], { clamp: true });
+               const rawRotate = useTransform(scrollYProgress, [0.05, 0.6], [part.rotation, 0], { clamp: true });
+               
+               const x = useSpring(rawX, { stiffness: 40, damping: 15 });
+               const y = useSpring(rawY, { stiffness: 40, damping: 15 });
+               const rotate = useSpring(rawRotate, { stiffness: 40, damping: 15 });
                
                const partOpacity = useTransform(scrollYProgress, [0, 0.1, 0.68, 0.78], [0, 1, 1, 0], { clamp: true });
                const labelOpacity = useTransform(scrollYProgress, [0.2, 0.4, 0.52, 0.62], [0, 1, 1, 0], { clamp: true });
@@ -137,9 +148,10 @@ export default function ArtisanAnatomy() {
                  >
                     <div className="relative w-[280px] h-[180px] md:w-[600px] md:h-[400px]">
                         <Image 
-                          src="/products/product_7.png" 
+                          src="/products/Terra/terra_3.png" 
                           alt={part.label} 
                           fill
+                          sizes="(max-width: 768px) 280px, 600px"
                           className="object-contain"
                           style={{ clipPath: part.clipPath }}
                           priority
