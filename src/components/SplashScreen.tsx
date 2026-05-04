@@ -13,13 +13,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     // Zoom into 'O' after writing finishes
     const zoomTimer = setTimeout(() => {
       setIsZooming(true);
-    }, 3200);
+    }, 1200);
 
-    // Completely unmount after 5 seconds to let user use the app
+    // Completely unmount after 2 seconds to let user use the app
     const exitTimer = setTimeout(() => {
       document.body.style.overflow = ""; // Restore scroll
       onComplete();
-    }, 5000);
+    }, 2000);
 
     return () => {
       clearTimeout(zoomTimer);
@@ -65,9 +65,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
            initial={{ left: "0%" }}
            animate={{ left: "100%" }}
            transition={{
-             duration: 2.5,
+             duration: 0.8,
              ease: "easeInOut",
-             delay: 0.5 // Start writing 0.5s after load
+             delay: 0.2 // Start writing 0.2s after load
            }}
         />
       </motion.div>

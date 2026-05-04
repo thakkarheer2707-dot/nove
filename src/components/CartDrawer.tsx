@@ -37,7 +37,7 @@ export default function CartDrawer() {
 
   // Shipping State
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [address, setAddress] = useState({ street: "", city: "", pincode: "", phone: "" });
+  const [address, setAddress] = useState({ street: "", city: "", pincode: "", phone: "", email: "" });
 
   const recordOrder = async (orderEmail: string, integrityToken?: string) => {
     try {
@@ -70,8 +70,17 @@ export default function CartDrawer() {
     }
 
     if (paymentMethod === "cod") {
-      // Start Email Auth flow for COD
-      setAuthStep("email");
+      // Direct placement for COD (Guest or User)
+      setIsProcessing(true);
+      try {
+        await recordOrder(user?.email || address.email);
+        setPaymentSuccess(true);
+        if (clearCart) clearCart();
+      } catch (err) {
+        alert("Failed to place order. Please try again.");
+      } finally {
+        setIsProcessing(false);
+      }
       return;
     }
 
@@ -130,7 +139,7 @@ export default function CartDrawer() {
           }
           else alert("Payment verification failed. Please contact support@nove.in");
         },
-        prefill: { name: user?.name || "", email: user?.email || "", contact: "" },
+        prefill: { name: user?.name || "Guest", email: user?.email || address.email, contact: address.phone },
         theme: { color: "#1d1d1f" },
         modal: { ondismiss: () => setIsProcessing(false) },
       };
@@ -329,104 +338,34 @@ export default function CartDrawer() {
                         />
                      </div>
 
-                     <div className="pt-8">
+                      {!user && (
+                        <div>
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Email Address (For Order Tracking)</label>
+                          <input 
+                            type="email"
+                            placeholder="you@example.com"
+                            value={address.email}
+                            onChange={(e) => setAddress({...address, email: e.target.value})}
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
+                          />
+                        </div>
+                      )}
+
+                      <div className="pt-8">
                         <button
                           onClick={() => {
-                            if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10) {
+                            const isEmailValid = user || (address.email && address.email.includes("@"));
+                            if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
                               setShowAddressForm(false);
                             } else {
-                              alert("Please complete every field accurately (ensure valid pincode and phone number).");
+                              alert("Please complete every field accurately (ensure valid email, pincode and phone number).");
                             }
                           }}
                           className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98]"
                         >
-                          Save & Continue to Payment
+                          {paymentMethod === "online" ? "Save & Continue to Payment" : "Save & Place Order"}
                         </button>
                      </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* ── OTP AUTHENTICATION OVERLAY (COD ONLY) ── */}
-            <AnimatePresence>
-              {authStep !== "idle" && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="absolute inset-0 bg-[#fbfbfd] z-20 flex flex-col p-8"
-                >
-                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-black/5 pt-2">
-                    <h2 className="text-xl font-bold text-[#1d1d1f] tracking-widest uppercase">Secure Verification</h2>
-                    <button onClick={() => { setAuthStep("idle"); setAuthError(""); }} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full">
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <div className="flex-1">
-                    {authError && <p className="text-red-600 text-sm mb-6 bg-red-50 p-4 rounded-xl border border-red-100">{authError}</p>}
-
-                    {authStep === "email" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        <p className="text-gray-500 font-medium mb-8 text-sm leading-relaxed">
-                          To place a Cash on Delivery order, we need to verify your email address. We will send a secure 6-digit code.
-                        </p>
-                        
-                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2 font-bold">Email Address</label>
-                        <div className="relative mb-8">
-                          <input
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
-                          />
-                          <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                        </div>
-
-                        <button
-                          onClick={handleSendOtp}
-                          disabled={isProcessing}
-                          className="w-full bg-[#1d1d1f] text-white py-4 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          {isProcessing ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : "Send Authentication Code"}
-                        </button>
-                      </motion.div>
-                    )}
-
-                    {authStep === "otp" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        <p className="text-gray-500 font-medium mb-8 text-sm leading-relaxed">
-                          Enter the 6-digit code sent to <span className="text-[#1d1d1f] font-bold">{email}</span>.
-                        </p>
-                        
-                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2 font-bold">Authentication Code</label>
-                        <div className="relative mb-8">
-                          <input
-                            type="text"
-                            placeholder="• • • • • •"
-                            maxLength={6}
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all tracking-[0.5em] font-bold shadow-sm"
-                          />
-                          <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                        </div>
-
-                        <button
-                          onClick={handleVerifyOtp}
-                          disabled={isProcessing || otp.length < 4}
-                          className="w-full bg-[#1d1d1f] text-white py-4 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          {isProcessing ? <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : "Verify & Place Order"}
-                        </button>
-                        
-                        <button onClick={() => setAuthStep("email")} className="w-full text-center text-sm text-gray-500 mt-6 hover:text-[#1d1d1f] transition-colors font-medium">
-                          Typo in email? Go back.
-                        </button>
-                      </motion.div>
-                    )}
                   </div>
                 </motion.div>
               )}
@@ -542,7 +481,7 @@ export default function CartDrawer() {
                   )}
                 </button>
                 <p className="text-center text-[10px] text-gray-400 uppercase tracking-widest mt-6 font-bold">
-                  {paymentMethod === "online" ? "256-bit SSL Encrypted · Powered by Razorpay" : "Identity verification required for COD"}
+                  {paymentMethod === "online" ? "256-bit SSL Encrypted · Powered by Razorpay" : "Verified 1-Click Checkout Experience"}
                 </p>
               </div>
             )}

@@ -126,7 +126,9 @@ export default function Navigation() {
                         className="text-[#1d1d1f]/60 hover:text-black transition-colors flex items-center gap-2"
                       >
                         <User size={18} strokeWidth={2} />
-                        {user && <span className="text-[11px] font-bold uppercase tracking-tighter text-[#1d1d1f]/40">Profile</span>}
+                        <span className="text-[11px] font-bold uppercase tracking-tighter text-[#1d1d1f]/40">
+                          {user ? "Profile" : "Guest"}
+                        </span>
                       </Link>
                     </motion.div>
                     <motion.div whileTap={{ scale: 0.9 }}>
@@ -237,7 +239,7 @@ export default function Navigation() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-2xl text-gray-400 font-medium tracking-tight flex items-center justify-between"
                 >
-                  <span>{user ? `Account (${user.name.split(' ')[0]})` : "Sign In / Register"}</span>
+                  <span>{user ? `Account (${user.name.split(' ')[0]})` : "Sign In / Guest"}</span>
                   <ArrowRight size={20} className="text-[#1d1d1f]/20" />
                 </Link>
               </motion.div>
