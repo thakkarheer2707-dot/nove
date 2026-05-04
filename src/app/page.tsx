@@ -20,7 +20,6 @@ export default function Home() {
   const craftsmanshipRef = useRef<HTMLElement>(null);
   const bentoRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const { scrollY } = useScroll();
   const smoothScrollY = useSpring(scrollY, { stiffness: 35, damping: 25, restDelta: 0.001 });
@@ -40,12 +39,6 @@ export default function Home() {
     offset: ["start end", "end start"]
   });
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 4000); 
-    return () => clearInterval(timer);
-  }, []);
 
 
 
@@ -123,86 +116,88 @@ export default function Home() {
             Premium Eucalyptus Leather. <br className="md:hidden" /> The art of weightless elegance.
           </motion.h2>
 
-          {/* Foreground Ethereal Product - Tactile iPhone Swiper */}
-          <motion.div 
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: { opacity: 1, y: 0, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } }
-            }}
-            className="relative z-20 w-full max-w-[90vw] md:max-w-[450px] aspect-[4/3] md:aspect-[3/2] flex-shrink-0 mb-10"
-          >
-            {/* Glass Case Overlay Effect */}
-            <div ref={cardRef} className="relative w-full h-full glass-display rounded-[40px] md:rounded-[60px] p-8 md:p-12 overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none z-10" />
-              
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ 
-                    opacity: 1, 
-                    scale: [1, 1.03, 1],
-                    transition: {
-                      opacity: { duration: 0.8, ease: "easeInOut" },
-                      scale: { 
-                        duration: 6, 
-                        repeat: Infinity, 
-                        ease: "easeInOut" 
-                      }
-                    }
-                  }}
-                  exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.6 } }}
-                  className="relative w-full h-full z-0 touch-none"
-                  style={{ opacity: 1 }}
-                >
-                  <Image 
-                    src={HERO_IMAGES[currentIndex]} 
-                    alt="NOVE Masterpiece Collection" 
-                    fill 
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    quality={100}
-                    className="object-contain product-image select-none pointer-events-none"
-                    priority
-                  />
-                  {/* Liquid Glass Shine Effect */}
-                  <motion.div 
-                    animate={{ 
-                      x: ["-150%", "150%"],
-                      opacity: [0, 0.5, 0]
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity, 
-                      repeatDelay: 5,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] pointer-events-none z-10"
-                  />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Pagination indicator */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-                {HERO_IMAGES.map((_, i) => (
-                  <motion.div 
-                    key={i} 
-                    animate={{ 
-                      width: i === currentIndex ? 24 : 6,
-                      backgroundColor: i === currentIndex ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.1)"
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="h-1.5 rounded-full"
-                  />
-                ))}
+          {/* Editorial Multi-Product Showcase */}
+          <div className="relative z-20 w-full max-w-7xl mx-auto mt-12 md:mt-20 px-6 h-[500px] md:h-[700px] flex items-center justify-center">
+            {/* 1. Main Masterpiece - Ember Black */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50, scale: 0.9 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0, 
+                scale: 1,
+                y: [0, -20, 0],
+                transition: {
+                  duration: 1.5,
+                  y: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                }
+              }}
+              className="absolute left-[5%] md:left-[10%] top-[10%] w-[60%] md:w-[500px] aspect-square z-30"
+            >
+              <div className="relative w-full h-full glass-display rounded-[60px] p-8 md:p-12 shadow-2xl overflow-hidden group">
+                 <Image src="/products/Ember/ember_v3.png" alt="Ember Black" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" priority />
+                 <div className="absolute bottom-6 left-8 text-left">
+                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Ember</p>
+                   <p className="text-sm font-bold text-[#1d1d1f]">Midnight Black</p>
+                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* 2. Secondary - Terra Brown */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0, 
+                scale: 0.85,
+                y: [0, 20, 0],
+                transition: {
+                  duration: 1.8,
+                  delay: 0.3,
+                  y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                }
+              }}
+              className="absolute right-[5%] md:right-[15%] top-[0%] w-[45%] md:w-[350px] aspect-square z-20"
+            >
+              <div className="relative w-full h-full glass-display rounded-[50px] p-6 md:p-10 shadow-xl overflow-hidden group">
+                 <Image src="/products/Terra/te1_v2.png" alt="Terra Brown" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
+                 <div className="absolute bottom-6 left-8 text-left">
+                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Terra</p>
+                   <p className="text-sm font-bold text-[#1d1d1f]">Heather Brown</p>
+                 </div>
+              </div>
+            </motion.div>
+
+            {/* 3. Tertiary - Aqua Blue */}
+            <motion.div 
+              initial={{ opacity: 0, y: 100, scale: 0.7 }}
+              animate={{ 
+                opacity: 0.9, 
+                y: 0, 
+                scale: 0.75,
+                x: [0, 15, 0],
+                transition: {
+                  duration: 2,
+                  delay: 0.6,
+                  x: { duration: 7, repeat: Infinity, ease: "easeInOut" }
+                }
+              }}
+              className="absolute right-[0%] md:right-[5%] bottom-[10%] w-[40%] md:w-[300px] aspect-square z-10"
+            >
+              <div className="relative w-full h-full glass-display rounded-[40px] p-4 md:p-8 shadow-lg overflow-hidden group opacity-80 hover:opacity-100 transition-opacity">
+                 <Image src="/products/Aqua/aq_v1.png" alt="Aqua Blue" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
+                 <div className="absolute bottom-6 left-8 text-left">
+                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Aqua</p>
+                   <p className="text-sm font-bold text-[#1d1d1f]">Ocean Mist</p>
+                 </div>
+              </div>
+            </motion.div>
+          </div>
           
           <motion.div
-             variants={{
-               hidden: { opacity: 0, scale: 0.9 },
-               visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: "easeOut" } }
-             }}
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ delay: 1.5, duration: 0.8 }}
+             className="mt-12 md:mt-0 z-40"
           >
             <Link href="/store" className="glass px-10 py-5 rounded-full flex items-center space-x-4 hover:bg-white/90 transition-all shadow-[0_15px_40px_rgba(0,0,0,0.08)] active:scale-95 group capitalize">
               <span className="text-[#1d1d1f] text-lg font-bold tracking-tight">Explore the Collection</span>
