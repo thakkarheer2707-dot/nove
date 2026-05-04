@@ -138,28 +138,21 @@ export default function Home() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    const threshold = 50;
-                    if (info.offset.x > threshold) {
-                      setCurrentIndex((prev) => (prev - 1 + HERO_IMAGES.length) % HERO_IMAGES.length);
-                    } else if (info.offset.x < -threshold) {
-                      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: [1, 1.03, 1],
+                    transition: {
+                      opacity: { duration: 0.8, ease: "easeInOut" },
+                      scale: { 
+                        duration: 6, 
+                        repeat: Infinity, 
+                        ease: "easeInOut" 
+                      }
                     }
                   }}
-                  initial={{ x: 100, opacity: 0, scale: 0.95 }}
-                  animate={{ x: 0, opacity: 1, scale: 1 }}
-                  exit={{ x: -100, opacity: 0, scale: 0.95 }}
-                  transition={{ 
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30,
-                    opacity: { duration: 0.4 }
-                  }}
-                  className="relative w-full h-full z-0 cursor-grab active:cursor-grabbing touch-none"
-                  whileHover={{ scale: 1.02 }}
+                  exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.6 } }}
+                  className="relative w-full h-full z-0 touch-none"
                   style={{ opacity: 1 }}
                 >
                   <Image 
