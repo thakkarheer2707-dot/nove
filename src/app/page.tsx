@@ -20,7 +20,8 @@ export default function Home() {
   const craftsmanshipRef = useRef<HTMLElement>(null);
   const bentoRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const { scrollY } = useScroll();
   const smoothScrollY = useSpring(scrollY, { stiffness: 35, damping: 25, restDelta: 0.001 });
@@ -42,6 +43,22 @@ export default function Home() {
 
 
 
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000); 
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    setMousePos({
+      x: (clientX / innerWidth - 0.5) * 20,
+      y: (clientY / innerHeight - 0.5) * 20
+    });
+  };
 
   // Section 1: Hero Transforms
   const heroOpacity = useTransform(smoothScrollY, [0, 1500, 1800], [1, 1, 0]);
@@ -117,108 +134,118 @@ export default function Home() {
             Premium Eucalyptus Leather. <br className="md:hidden" /> The art of weightless elegance.
           </motion.h2>
 
-          {/* Editorial Multi-Product Showcase */}
-          <div className="relative z-20 w-full max-w-7xl mx-auto mt-12 md:mt-20 px-6 h-[500px] md:h-[700px] flex items-center justify-center">
-            {/* 1. Main Masterpiece - Ember Black */}
+          {/* Cinematic Spotlight Showcase */}
+          <div 
+            onMouseMove={handleMouseMove}
+            className="relative z-20 w-full max-w-4xl mx-auto mt-12 md:mt-16 px-6 aspect-square md:aspect-[4/3] flex items-center justify-center cursor-none group"
+          >
+            {/* Interactive Light Source (Follows Cursor) */}
             <motion.div 
-              onMouseEnter={() => setHoveredIndex(0)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => setHoveredIndex(0)}
-              initial={{ opacity: 0, x: -50, scale: 0.9 }}
               animate={{ 
-                opacity: hoveredIndex !== null && hoveredIndex !== 0 ? 0.6 : 1, 
-                x: 0, 
-                scale: hoveredIndex === 0 ? 1.05 : hoveredIndex === null ? 1 : 0.95,
-                y: [0, -20, 0],
-                transition: {
-                  duration: 1.5,
-                  y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-                  opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 }
-                }
+                x: mousePos.x * 5, 
+                y: mousePos.y * 5,
+                opacity: [0.3, 0.5, 0.3]
               }}
-              className="absolute left-[5%] md:left-[10%] top-[10%] w-[60%] md:w-[500px] aspect-square"
-              style={{ cursor: 'pointer', zIndex: hoveredIndex === 0 ? 50 : 30 }}
-            >
-              <div className="relative w-full h-full glass-display rounded-[60px] p-8 md:p-12 shadow-2xl overflow-hidden group">
-                 <Image src="/products/Ember/ember_v3.png" alt="Ember Black" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" priority />
-                 <div className="absolute bottom-6 left-8 text-left">
-                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Ember</p>
-                   <p className="text-sm font-bold text-[#1d1d1f]">Midnight Black</p>
-                 </div>
-              </div>
-            </motion.div>
+              transition={{ type: "spring", stiffness: 50, damping: 20 }}
+              className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/40 via-transparent to-transparent blur-3xl pointer-events-none"
+            />
 
-            {/* 2. Secondary - Terra Brown */}
-            <motion.div 
-              onMouseEnter={() => setHoveredIndex(1)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => setHoveredIndex(1)}
-              initial={{ opacity: 0, x: 50, scale: 0.8 }}
-              animate={{ 
-                opacity: hoveredIndex !== null && hoveredIndex !== 1 ? 0.6 : 1, 
-                x: 0, 
-                scale: hoveredIndex === 1 ? 0.95 : hoveredIndex === null ? 0.85 : 0.8,
-                y: [0, 20, 0],
-                transition: {
-                  duration: 1.8,
-                  delay: 0.4,
-                  y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-                  opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 }
-                }
-              }}
-              className="absolute right-[5%] md:right-[15%] top-[0%] w-[45%] md:w-[350px] aspect-square"
-              style={{ cursor: 'pointer', zIndex: hoveredIndex === 1 ? 50 : 20 }}
-            >
-              <div className="relative w-full h-full glass-display rounded-[50px] p-6 md:p-10 shadow-xl overflow-hidden group">
-                 <Image src="/products/Terra/te1_v2.png" alt="Terra Brown" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
-                 <div className="absolute bottom-6 left-8 text-left">
-                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Terra</p>
-                   <p className="text-sm font-bold text-[#1d1d1f]">Heather Brown</p>
-                 </div>
-              </div>
-            </motion.div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  filter: "blur(0px)",
+                  transition: { 
+                    duration: 1.2, 
+                    ease: [0.16, 1, 0.3, 1],
+                    opacity: { duration: 0.8 }
+                  }
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 1.1, 
+                  filter: "blur(20px)",
+                  transition: { duration: 0.8, ease: "easeInOut" }
+                }}
+                className="relative w-full h-full flex items-center justify-center"
+              >
+                {/* Floating Shadow */}
+                <motion.div 
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    opacity: [0.2, 0.3, 0.2]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute bottom-[10%] w-[60%] h-[40px] bg-black/10 blur-2xl rounded-full"
+                />
 
-            {/* 3. Tertiary - Aqua Blue */}
+                <motion.div 
+                  animate={{ 
+                    rotateX: -mousePos.y * 0.5, 
+                    rotateY: mousePos.x * 0.5,
+                    y: [0, -15, 0]
+                  }}
+                  transition={{ 
+                    rotateX: { type: "spring", stiffness: 100, damping: 30 },
+                    rotateY: { type: "spring", stiffness: 100, damping: 30 },
+                    y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="relative w-[85%] h-[85%] preserve-3d"
+                >
+                  <Image 
+                    src={HERO_IMAGES[currentIndex]} 
+                    alt="NOVE Collection" 
+                    fill 
+                    className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)]"
+                    priority
+                  />
+                  
+                  {/* Liquid Shimmer Effect */}
+                  <motion.div 
+                    animate={{ 
+                      x: ["-100%", "200%"],
+                      opacity: [0, 0.4, 0]
+                    }}
+                    transition={{ 
+                      duration: 4, 
+                      repeat: Infinity, 
+                      repeatDelay: 3,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] pointer-events-none z-10"
+                  />
+                </motion.div>
+
+                {/* Minimalist Info Tag */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-300 mb-1">NOVE LUXURY</p>
+                  <div className="h-[1px] w-12 bg-gray-200 mx-auto" />
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Custom Cursor Focus */}
             <motion.div 
-              onMouseEnter={() => setHoveredIndex(2)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => setHoveredIndex(2)}
-              initial={{ opacity: 0, y: 100, scale: 0.7 }}
-              animate={{ 
-                opacity: hoveredIndex !== null && hoveredIndex !== 2 ? 0.5 : 0.9, 
-                y: 0, 
-                scale: hoveredIndex === 2 ? 0.85 : hoveredIndex === null ? 0.75 : 0.7,
-                x: [0, 15, 0],
-                transition: {
-                  duration: 2,
-                  delay: 0.8,
-                  x: { duration: 7, repeat: Infinity, ease: "easeInOut" },
-                  opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 }
-                }
-              }}
-              className="absolute right-[0%] md:right-[5%] bottom-[10%] w-[40%] md:w-[300px] aspect-square"
-              style={{ cursor: 'pointer', zIndex: hoveredIndex === 2 ? 50 : 10 }}
-            >
-              <div className="relative w-full h-full glass-display rounded-[40px] p-4 md:p-8 shadow-lg overflow-hidden group transition-opacity">
-                 <Image src="/products/Aqua/aq_v1.png" alt="Aqua Blue" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
-                 <div className="absolute bottom-6 left-8 text-left">
-                   <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">NOVE Aqua</p>
-                   <p className="text-sm font-bold text-[#1d1d1f]">Ocean Mist</p>
-                 </div>
-              </div>
-            </motion.div>
+              animate={{ x: mousePos.x * 10, y: mousePos.y * 10 }}
+              className="hidden md:block absolute w-8 h-8 border border-white/40 rounded-full pointer-events-none z-50 mix-blend-difference"
+            />
           </div>
           
           <motion.div
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 1.5, duration: 0.8 }}
-             className="mt-12 md:mt-0 z-40"
+             transition={{ delay: 1, duration: 0.8 }}
+             className="mt-12 md:mt-8 z-40"
           >
-            <Link href="/store" className="glass px-10 py-5 rounded-full flex items-center space-x-4 hover:bg-white/90 transition-all shadow-[0_15px_40px_rgba(0,0,0,0.08)] active:scale-95 group capitalize">
+            <Link href="/store" className="glass px-12 py-5 rounded-full flex items-center space-x-4 hover:bg-white/95 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.1)] active:scale-95 group">
               <span className="text-[#1d1d1f] text-lg font-bold tracking-tight">Explore the Collection</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
