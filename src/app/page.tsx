@@ -129,18 +129,16 @@ export default function Home() {
                 opacity: hoveredIndex !== null && hoveredIndex !== 0 ? 0.6 : 1, 
                 x: 0, 
                 scale: hoveredIndex === 0 ? 1.05 : hoveredIndex === null ? 1 : 0.95,
-                zIndex: hoveredIndex === 0 ? 50 : 30,
                 y: [0, -20, 0],
                 transition: {
                   duration: 1.5,
                   y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
                   opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 },
-                  zIndex: { duration: 0 }
+                  scale: { duration: 0.4 }
                 }
               }}
-              className="absolute left-[5%] md:left-[10%] top-[10%] w-[60%] md:w-[500px] aspect-square transition-all duration-500"
-              style={{ cursor: 'pointer' }}
+              className="absolute left-[5%] md:left-[10%] top-[10%] w-[60%] md:w-[500px] aspect-square"
+              style={{ cursor: 'pointer', zIndex: hoveredIndex === 0 ? 50 : 30 }}
             >
               <div className="relative w-full h-full glass-display rounded-[60px] p-8 md:p-12 shadow-2xl overflow-hidden group">
                  <Image src="/products/Ember/ember_v3.png" alt="Ember Black" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" priority />
@@ -161,19 +159,17 @@ export default function Home() {
                 opacity: hoveredIndex !== null && hoveredIndex !== 1 ? 0.6 : 1, 
                 x: 0, 
                 scale: hoveredIndex === 1 ? 0.95 : hoveredIndex === null ? 0.85 : 0.8,
-                zIndex: hoveredIndex === 1 ? 50 : 20,
                 y: [0, 20, 0],
                 transition: {
                   duration: 1.8,
                   delay: 0.4,
                   y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
                   opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 },
-                  zIndex: { duration: 0 }
+                  scale: { duration: 0.4 }
                 }
               }}
-              className="absolute right-[5%] md:right-[15%] top-[0%] w-[45%] md:w-[350px] aspect-square transition-all duration-500"
-              style={{ cursor: 'pointer' }}
+              className="absolute right-[5%] md:right-[15%] top-[0%] w-[45%] md:w-[350px] aspect-square"
+              style={{ cursor: 'pointer', zIndex: hoveredIndex === 1 ? 50 : 20 }}
             >
               <div className="relative w-full h-full glass-display rounded-[50px] p-6 md:p-10 shadow-xl overflow-hidden group">
                  <Image src="/products/Terra/te1_v2.png" alt="Terra Brown" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
@@ -194,19 +190,17 @@ export default function Home() {
                 opacity: hoveredIndex !== null && hoveredIndex !== 2 ? 0.5 : 0.9, 
                 y: 0, 
                 scale: hoveredIndex === 2 ? 0.85 : hoveredIndex === null ? 0.75 : 0.7,
-                zIndex: hoveredIndex === 2 ? 50 : 10,
                 x: [0, 15, 0],
                 transition: {
                   duration: 2,
                   delay: 0.8,
                   x: { duration: 7, repeat: Infinity, ease: "easeInOut" },
                   opacity: { duration: 0.3 },
-                  scale: { duration: 0.4 },
-                  zIndex: { duration: 0 }
+                  scale: { duration: 0.4 }
                 }
               }}
-              className="absolute right-[0%] md:right-[5%] bottom-[10%] w-[40%] md:w-[300px] aspect-square transition-all duration-500"
-              style={{ cursor: 'pointer' }}
+              className="absolute right-[0%] md:right-[5%] bottom-[10%] w-[40%] md:w-[300px] aspect-square"
+              style={{ cursor: 'pointer', zIndex: hoveredIndex === 2 ? 50 : 10 }}
             >
               <div className="relative w-full h-full glass-display rounded-[40px] p-4 md:p-8 shadow-lg overflow-hidden group transition-opacity">
                  <Image src="/products/Aqua/aq_v1.png" alt="Aqua Blue" fill className="object-contain product-image group-hover:scale-105 transition-transform duration-700" />
