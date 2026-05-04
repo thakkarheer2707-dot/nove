@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowRight, Feather, Droplets, Gem } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import HangingBag from "@/components/HangingBag";
 
 const HERO_IMAGES = [
   "/products/Ember/ember_v3.png",
@@ -22,7 +21,6 @@ export default function Home() {
   const bentoRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [introDone, setIntroDone] = useState(false);
 
   const { scrollY } = useScroll();
   const smoothScrollY = useSpring(scrollY, { stiffness: 35, damping: 25, restDelta: 0.001 });
@@ -42,26 +40,14 @@ export default function Home() {
     offset: ["start end", "end start"]
   });
 
-  const bagMergeProgress = useTransform(smoothScrollY, [500, 650], [0, 1]);
-
   useEffect(() => {
     const timer = setInterval(() => {
-      // Rotate after the bag has settled in the center
-      if (smoothScrollY.get() > 800) {
-        setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-      }
+      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, 4000); 
     return () => clearInterval(timer);
-  }, [smoothScrollY]);
+  }, []);
 
-  // Force index 0 (Black Bag) until the placing sequence is fully complete
-  useEffect(() => {
-    return smoothScrollY.on("change", (latest) => {
-      if (latest < 750 && currentIndex !== 0) {
-        setCurrentIndex(0);
-      }
-    });
-  }, [smoothScrollY, currentIndex]);
+
 
   // Section 1: Hero Transforms
   const heroOpacity = useTransform(smoothScrollY, [0, 1500, 1800], [1, 1, 0]);
@@ -79,17 +65,15 @@ export default function Home() {
 
   return (
     <div ref={containerRef} className="flex flex-col bg-[#fbfbfd] min-h-screen">
-      <HangingBag onDropComplete={() => setIntroDone(true)} cardRef={cardRef} scrollYValue={smoothScrollY} />
       
       <motion.div
          initial="hidden"
-         animate={introDone ? "visible" : "hidden"}
+         animate="visible"
          variants={{
-           hidden: { opacity: 0, pointerEvents: "none" },
+           hidden: { opacity: 0 },
            visible: { 
              opacity: 1, 
-             pointerEvents: "auto", 
-             transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.2, when: "beforeChildren" } 
+             transition: { duration: 1.2, ease: "easeOut", staggerChildren: 0.2 } 
            }
          }}
          className="w-full flex-grow flex flex-col"
@@ -176,7 +160,7 @@ export default function Home() {
                   }}
                   className="relative w-full h-full z-0 cursor-grab active:cursor-grabbing touch-none"
                   whileHover={{ scale: 1.02 }}
-                  style={{ opacity: currentIndex === 0 ? bagMergeProgress : 1 }}
+                  style={{ opacity: 1 }}
                 >
                   <Image 
                     src={HERO_IMAGES[currentIndex]} 
