@@ -79,7 +79,7 @@ export default function Home() {
          className="w-full flex-grow flex flex-col"
       >
         {/* 1. Ethereal Liquid Hero */}
-          <section className="relative h-[1800px] w-full flex flex-col items-center pt-[15vh]">
+          <section className="relative h-[1800px] w-full flex flex-col items-center pt-[5vh]">
         {/* Soft Background Liquid Blobs */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <motion.div 
@@ -102,7 +102,7 @@ export default function Home() {
 
         <motion.div 
           style={{ opacity: heroOpacity, y: heroParallax }}
-          className="relative z-10 text-center flex flex-col items-center px-6 mt-[25vh] md:mt-[45vh]"
+          className="relative z-10 text-center flex flex-col items-center px-6 mt-[10vh] md:mt-[15vh]"
         >
           <motion.h1 
             variants={{
