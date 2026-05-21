@@ -59,7 +59,7 @@ export const products: Product[] = [
           "/products/Ember/OliveGreen/img4.jpeg",
           "/products/Ember/OliveGreen/img5.jpeg"
         ],
-        price: 1
+        price: 5999
       }
     ]
   },
