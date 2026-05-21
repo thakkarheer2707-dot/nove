@@ -5,11 +5,13 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 type User = {
   name: string;
   email: string;
+  isGuest?: boolean;
 };
 
 type AuthContextType = {
   user: User | null;
   login: (userData: User) => void;
+  loginAsGuest: () => void;
   logout: () => void;
   loading: boolean;
 };
@@ -39,13 +41,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("nove_user", JSON.stringify(userData));
   };
 
+  const loginAsGuest = () => {
+    const randomId = Math.random().toString(36).substring(2, 9);
+    const guestUser: User = {
+      name: "Guest",
+      email: `guest_${randomId}@nove.in`,
+      isGuest: true
+    };
+    setUser(guestUser);
+    localStorage.setItem("nove_user", JSON.stringify(guestUser));
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("nove_user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, loginAsGuest, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

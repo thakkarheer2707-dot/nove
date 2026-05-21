@@ -73,7 +73,7 @@ export default function CartDrawer() {
       // Direct placement for COD (Guest or User)
       setIsProcessing(true);
       try {
-        await recordOrder(user?.email || address.email);
+        await recordOrder((user && !user.isGuest) ? user.email : address.email);
         setPaymentSuccess(true);
         if (clearCart) clearCart();
       } catch (err) {
@@ -107,7 +107,8 @@ export default function CartDrawer() {
         });
         const verifyData = await verifyRes.json();
         
-        if (user) await recordOrder(user.email, verifyData.integrityToken);
+        if (user && !user.isGuest) await recordOrder(user.email, verifyData.integrityToken);
+        else await recordOrder(address.email, verifyData.integrityToken);
         setIsProcessing(false);
         setPaymentSuccess(true);
         if (clearCart) clearCart();
@@ -133,7 +134,8 @@ export default function CartDrawer() {
           });
           const result = await verifyRes.json();
           if (result.success) {
-            if (user) await recordOrder(user.email, result.integrityToken);
+            if (user && !user.isGuest) await recordOrder(user.email, result.integrityToken);
+            else await recordOrder(address.email, result.integrityToken);
             setPaymentSuccess(true);
             if (clearCart) clearCart();
           }
@@ -199,7 +201,7 @@ export default function CartDrawer() {
       if (!res.ok) throw new Error(data.error || "Verification failed.");
 
       // Success! Record order to the logged-in user OR the verified email
-      await recordOrder(user?.email || email);
+      await recordOrder((user && !user.isGuest) ? user.email : email);
 
       setAuthStep("idle");
       setPaymentSuccess(true);
@@ -338,7 +340,7 @@ export default function CartDrawer() {
                         />
                      </div>
 
-                      {!user && (
+                      {(!user || user.isGuest) && (
                         <div>
                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Email Address (For Order Tracking)</label>
                           <input 
@@ -354,7 +356,7 @@ export default function CartDrawer() {
                       <div className="pt-8">
                         <button
                           onClick={() => {
-                            const isEmailValid = user || (address.email && address.email.includes("@"));
+                            const isEmailValid = (user && !user.isGuest) || (address.email && address.email.includes("@"));
                             if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
                               setShowAddressForm(false);
                             } else {

@@ -36,7 +36,7 @@ export default function ProfilePage() {
       router.push("/login");
     }
 
-    if (user) {
+    if (user && !user.isGuest) {
       fetch(`/api/orders/history?email=${user.email}`)
         .then(res => res.json())
         .then(data => {
@@ -46,6 +46,8 @@ export default function ProfilePage() {
         })
         .catch(err => console.error("Error fetching orders:", err))
         .finally(() => setFetchingOrders(false));
+    } else if (user && user.isGuest) {
+      setFetchingOrders(false);
     }
   }, [user, loading, router]);
 
@@ -109,8 +111,17 @@ export default function ProfilePage() {
             <div className="bg-white border border-gray-200 rounded-[32px] p-8 shadow-sm">
               <h3 className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4">Membership</h3>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                <span className="font-bold tracking-tight text-sm">NOVE Elite Status</span>
+                {user.isGuest ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-gray-400" />
+                    <span className="font-bold tracking-tight text-sm text-gray-500">Guest Status</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                    <span className="font-bold tracking-tight text-sm">NOVE Elite Status</span>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
@@ -122,6 +133,22 @@ export default function ProfilePage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="md:col-span-2 space-y-6"
           >
+            {user.isGuest && (
+              <div className="bg-gradient-to-br from-[#1d1d1f] to-[#424245] text-white rounded-[32px] p-8 shadow-lg relative overflow-hidden">
+                <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+                <h3 className="text-xl font-bold mb-2 tracking-tight">Unlock the Full NOVE Experience</h3>
+                <p className="text-gray-300 font-light text-sm mb-6 max-w-md leading-relaxed">
+                  You are currently browsing as a guest. Create a permanent account to enjoy Elite membership privileges, track all your past collections, and manage your artisan selections.
+                </p>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full text-xs font-bold hover:bg-gray-100 transition-all shadow-md group"
+                >
+                  Create Account <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            )}
+
             <div className="bg-white border border-gray-200 rounded-[40px] p-10 min-h-[400px] shadow-sm">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold tracking-tight">Recent Orders</h2>

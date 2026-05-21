@@ -31,7 +31,7 @@ export default function ProductView({ product }: { product: Product }) {
   const [isDragging, setIsDragging] = useState(false);
   
   const { addToCart } = useCart();
-  const { user } = useAuth();
+  const { user, loginAsGuest } = useAuth();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const handleVariantChange = (variant: ProductVariant) => {
@@ -403,7 +403,18 @@ export default function ProductView({ product }: { product: Product }) {
                     Get Started <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <button 
-                    onClick={() => setShowAuthGate(false)}
+                    onClick={() => {
+                      loginAsGuest();
+                      setShowAuthGate(false);
+                      addToCart({
+                        id: `${product.id}-${selectedVariant.color.toLowerCase().replace(/\s+/g, '-')}`,
+                        name: `${product.name} - ${selectedVariant.color}`,
+                        price: selectedVariant.price || product.basePrice,
+                        image: selectedVariant.images[0],
+                        color: selectedVariant.color,
+                        quantity: 1
+                      });
+                    }}
                     className="text-sm text-gray-500 font-medium hover:text-gray-300 transition-colors"
                   >
                     Browse as Guest
