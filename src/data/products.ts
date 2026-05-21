@@ -23,7 +23,7 @@ export const products: Product[] = [
   {
     id: "ember",
     name: "NOVE Ember",
-    basePrice: 1,
+    basePrice: 5999,
     collection: "Ember Series",
     description: "Inspired by the element of fire, the Ember represents pure strength and timeless ambition. Its fluid silhouette catches light with liquid-glass precision.",
     dimensions: {
@@ -44,7 +44,7 @@ export const products: Product[] = [
           "/products/Ember/Black/img4.jpeg",
           "/products/Ember/Black/img5.jpeg"
         ],
-        price: 1
+        price: 5999
       },
       {
         color: "Olive Green",
