@@ -338,7 +338,7 @@ export default function CartDrawer() {
                         />
                      </div>
 
-                      {!user && (
+                    {(!user || user.isGuest) &&(
                         <div>
                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Email Address (For Order Tracking)</label>
                           <input 
@@ -354,7 +354,7 @@ export default function CartDrawer() {
                       <div className="pt-8">
                         <button
                           onClick={() => {
-                            const isEmailValid = user || (address.email && address.email.includes("@"));
+                            const isEmailValid = (user && !user.isGuest) || (address.email && address.email.includes("@"));
                             if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
                               setShowAddressForm(false);
                             } else {
