@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Flame, Droplets, Wind, Sparkles, Leaf, Recycle, ShieldCheck, Heart, Globe } from "lucide-react";
+import { ArrowRight, Flame, Droplets, Wind, Leaf, Recycle, ShieldCheck, Heart, Globe } from "lucide-react";
 import ArtisanAnatomy from "@/components/ArtisanAnatomy";
 
 const COLLECTIONS = [
@@ -115,7 +115,7 @@ export default function CollectionPage() {
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-700 text-xs font-bold uppercase tracking-widest mb-8">
-                <Sparkles size={14} /> Material Innovation
+                <Leaf size={14} /> Material Innovation
               </span>
               <h2 className="text-5xl md:text-7xl font-bold text-[#1d1d1f] mb-8">Eucalyptus <br/><span className="text-green-600 font-serif italic font-light">Leather</span></h2>
               <p className="text-xl text-[#424245] leading-relaxed font-light mb-12">

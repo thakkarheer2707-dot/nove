@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, Box, Truck, Home, Sparkles } from "lucide-react";
+import { Check, Box, Truck, Home, Layers } from "lucide-react";
 
 type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Artisan Crafting';
 
 const STEPS = [
   { status: 'Confirmed', icon: Check, label: 'Order Recieved' },
-  { status: 'Artisan Crafting', icon: Sparkles, label: 'Handcrafting' },
+  { status: 'Artisan Crafting', icon: Layers, label: 'Handcrafting' },
   { status: 'Shipped', icon: Truck, label: 'In Transit' },
   { status: 'Delivered', icon: Home, label: 'Delivered' }
 ];

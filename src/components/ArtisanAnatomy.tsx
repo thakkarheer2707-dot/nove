@@ -1,195 +1,110 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { ShieldCheck, Cpu, Layers, Award } from "lucide-react";
 
-// Massive offsets to ensure it looks like a cloud of parts, not a bag
-const PARTS = [
-  { 
-    id: "strap", 
-    label: "Hand-stitched Bio-Strap", 
-    initialX: -300, // No longer centered by default
-    initialY: -500, 
-    rotation: -45,
-    clipPath: "inset(0 0 55% 0)" 
+const DETAILS = [
+  {
+    id: "strap",
+    label: "Hand-stitched Bio-Strap",
+    desc: "Eucalyptus fiber material custom-woven for superior weight distribution, natural elasticity, and timeless durability.",
+    icon: Award,
   },
-  { 
-    id: "buckle-l", 
-    label: "Solid Titanium Hardware", 
-    initialX: -550, 
-    initialY: 400, 
-    rotation: -60,
-    clipPath: "inset(50% 50% 0 0)" 
+  {
+    id: "hardware",
+    label: "Solid Titanium Hardware",
+    desc: "Aerospace-grade lightweight alloy clasp custom-molded to fit the bag's elegant organic contours perfectly.",
+    icon: ShieldCheck,
   },
-  { 
-    id: "buckle-r", 
-    label: "Laser-Locked Buckles", 
-    initialX: 550, 
-    initialY: 400, 
-    rotation: 60,
-    clipPath: "inset(50% 0 0 50%)" 
+  {
+    id: "buckles",
+    label: "Laser-Locked Buckles",
+    desc: "Ultra-precise interlocking snaps engineered to firmly secure the bag's signature profile even under daily stress.",
+    icon: Cpu,
   },
-  { 
-    id: "body", 
-    label: "Eucalyptus Silk Lining", 
-    initialX: 300, // Shifted from center
-    initialY: 600, 
-    rotation: 15,
-    clipPath: "inset(15% 10% 15% 10%)" 
-  }
+  {
+    id: "lining",
+    label: "Eucalyptus Silk Lining",
+    desc: "Delicate, ultra-soft plant-based interior padding that naturally resists moisture and safeguards your absolute essentials.",
+    icon: Layers,
+  },
 ];
 
 export default function ArtisanAnatomy() {
-  const containerRef = useRef(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  const [mobileFactor, setMobileFactor] = useState(1);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setMobileFactor(window.innerWidth < 768 ? 0.35 : 1);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Background state transitions - forced to start dark
-  const bgOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0.8, 1, 1, 0]);
-  
-  // Transformation lifecycle:
-  // Starts FULLY DECONSTRUCTED at 0.0
-  const universalScale = useTransform(scrollYProgress, [0.4, 0.6, 0.9], [0.8, 1.1, 1.4], { clamp: true });
-  const idleRotation = useTransform(scrollYProgress, [0.6, 0.9], [0, 8], { clamp: true });
-  const mainOpacity = useTransform(scrollYProgress, [0.45, 0.6], [0, 1], { clamp: true });
-
   return (
-    <section 
-      ref={containerRef} 
-      className="relative h-[750vh] bg-[#1d1d1f] w-full"
-    >
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-32">
-        
-        {/* Atmosphere */}
-        <div className="absolute inset-0 z-0">
-           <motion.div 
-             style={{ opacity: bgOpacity }}
-             className="absolute top-[30%] left-[15%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-white/0 to-transparent" 
-           />
-           <motion.div 
-             style={{ opacity: bgOpacity }}
-             className="absolute bottom-[30%] right-[15%] w-[400px] md:w-[500px] h-[400px] md:h-[500px] rounded-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-white/0 to-transparent" 
-           />
+    <section className="bg-[#1d1d1f] py-24 md:py-32 w-full overflow-hidden text-white border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        {/* Header */}
+        <div className="text-center mb-16 md:mb-24">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-white/40 mb-4 block">
+            Precision Engineering
+          </span>
+          <h2 className="text-3xl md:text-5xl font-serif italic text-white font-light tracking-tight max-w-2xl mx-auto leading-tight">
+            Separating the masterpiece from the mundane.
+          </h2>
         </div>
 
-        {/* The Title Area */}
-        <motion.div 
-          style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.25, 0.45], [1, 0, 0], { clamp: true }),
-            y: useTransform(scrollYProgress, [0, 0.45], [50, -50], { clamp: true })
-          }}
-          className="absolute top-32 md:top-44 text-center z-20 px-8"
-        >
-           <h2 className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.5em] md:tracking-[0.8em] text-white/40 mb-4">Precision Engineering</h2>
-           <p className="text-2xl md:text-5xl font-serif italic text-white font-light tracking-tight leading-tight max-w-lg mx-auto">Separating the masterpiece from the mundane.</p>
-        </motion.div>
+        {/* Dynamic Responsive Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          {/* Main Visual - 5 cols */}
+          <div className="lg:col-span-5 flex justify-center">
+            <div className="relative w-full max-w-[450px] aspect-square md:aspect-[4/3] lg:aspect-square bg-white/[0.02] border border-white/5 rounded-[40px] p-8 md:p-12 flex items-center justify-center overflow-hidden group">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.03)_0%,_transparent_75%)] pointer-events-none" />
+              
+              {/* Luxury ambient shadow */}
+              <div className="absolute bottom-[10%] w-[70%] h-[30px] bg-black/40 blur-2xl rounded-full pointer-events-none" />
+              
+              <div className="relative w-[90%] h-[90%] hover:scale-[1.03] transition-transform duration-700">
+                <Image
+                  src="/products/Terra/terra_3.png"
+                  alt="NOVE Artisan Anatomy"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* The Exploding Bag Container */}
-        <div className="relative w-full max-w-5xl h-[40vh] md:h-[60vh] flex items-center justify-center translate-y-24 md:translate-y-36">
-            
-            {/* Base Full Bag (Starts completely hidden) */}
-            <motion.div 
-              style={{
-                opacity: useTransform(scrollYProgress, [0.58, 0.68, 0.95, 1], [0, 1, 1, 0], { clamp: true }),
-                scale: universalScale,
-                rotate: idleRotation,
-                // filter: mainBlur replaced with universal scale handling opacity indirectly
-              }}
-              className="absolute inset-0 flex items-center justify-center z-30"
-            >
-               <div className="relative w-[280px] h-[180px] md:w-[600px] md:h-[400px]">
-                  <Image 
-                    src="/products/Terra/terra_3.png" 
-                    alt="Finished NOVE" 
-                    fill
-                    sizes="(max-width: 768px) 280px, 600px"
-                    className="object-contain" 
-                    priority 
-                  />
-               </div>
-            </motion.div>
-
-             {PARTS.map((part) => {
-               const rawX = useTransform(scrollYProgress, [0.05, 0.6], [part.initialX * mobileFactor, 0], { clamp: true });
-               const rawY = useTransform(scrollYProgress, [0.05, 0.6], [part.initialY * mobileFactor, 0], { clamp: true });
-               const rawRotate = useTransform(scrollYProgress, [0.05, 0.6], [part.rotation, 0], { clamp: true });
-               
-               const x = useSpring(rawX, { stiffness: 40, damping: 15 });
-               const y = useSpring(rawY, { stiffness: 40, damping: 15 });
-               const rotate = useSpring(rawRotate, { stiffness: 40, damping: 15 });
-               
-               const partOpacity = useTransform(scrollYProgress, [0, 0.1, 0.68, 0.78], [0, 1, 1, 0], { clamp: true });
-               const labelOpacity = useTransform(scrollYProgress, [0.2, 0.4, 0.52, 0.62], [0, 1, 1, 0], { clamp: true });
-
-               return (
-                 <motion.div
-                   key={part.id}
-                   style={{ 
-                     x, y, rotate, opacity: partOpacity,
-                     scale: universalScale, 
-                     zIndex: 10
-                   }}
-                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                 >
-                    <div className="relative w-[280px] h-[180px] md:w-[600px] md:h-[400px]">
-                        <Image 
-                          src="/products/Terra/terra_3.png" 
-                          alt={part.label} 
-                          fill
-                          sizes="(max-width: 768px) 280px, 600px"
-                          className="object-contain"
-                          style={{ clipPath: part.clipPath }}
-                          priority
-                        />
-                        
-                        {/* Labels - Improved Mobile Positioning */}
-                        <motion.div 
-                          style={{ opacity: labelOpacity }}
-                          className={`absolute flex items-center gap-2 md:gap-4 whitespace-nowrap ${
-                            part.id === 'strap' ? 'top-[-30%] md:top-[-25%] right-[-5%] md:right-[-10%]' :
-                            part.id === 'buckle-l' ? 'bottom-[5%] md:bottom-[0%] left-[-20%] md:left-[-35%]' :
-                            part.id === 'buckle-r' ? 'bottom-[5%] md:bottom-[0%] right-[-20%] md:right-[-35%]' :
-                            'top-[40%] left-[-25%] md:left-[-45%]'
-                          }`}
-                        >
-                           <div className="w-6 md:w-12 h-[1px] bg-white/40"></div>
-                           <div>
-                              <p className="text-[7px] md:text-[9px] font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/30 mb-0.5 md:mb-1">{part.id}</p>
-                              <h4 className="text-white text-[10px] md:text-xs font-light tracking-widest">{part.label}</h4>
-                           </div>
-                        </motion.div>
+          {/* Details list - 7 cols */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+            {DETAILS.map((detail) => {
+              const Icon = detail.icon;
+              return (
+                <div
+                  key={detail.id}
+                  className="bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-white/10 p-8 rounded-[32px] transition-all duration-300 flex flex-col justify-between min-h-[220px]"
+                >
+                  <div className="space-y-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5">
+                      <Icon size={20} className="text-white/80" />
                     </div>
-                 </motion.div>
-               );
+                    <div>
+                      <span className="text-[9px] uppercase tracking-[0.2em] font-semibold text-white/30 block mb-1">
+                        {detail.id}
+                      </span>
+                      <h4 className="text-lg font-bold text-white tracking-tight">
+                        {detail.label}
+                      </h4>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-400 font-light leading-relaxed mt-4">
+                    {detail.desc}
+                  </p>
+                </div>
+              );
             })}
+          </div>
         </div>
 
-        {/* Finishing Label */}
-        <motion.div 
-          style={{ 
-            opacity: useTransform(scrollYProgress, [0.8, 0.9, 0.95, 1], [0, 1, 1, 0], { clamp: true }),
-            y: useTransform(scrollYProgress, [0.8, 0.9], [30, 0], { clamp: true })
-          }}
-          className="absolute bottom-32 md:bottom-40 text-center z-40 px-10"
-        >
-           <h3 className="text-xl md:text-3xl font-serif italic text-white/80 font-light tracking-tight pb-6">A unified vision of sustainable luxury.</h3>
-           <div className="w-px h-16 md:h-24 bg-gradient-to-b from-white/40 to-transparent mx-auto"></div>
-        </motion.div>
+        {/* Footer closing line */}
+        <div className="text-center mt-20 md:mt-28">
+          <p className="text-lg md:text-2xl font-serif italic text-white/60 font-light max-w-xl mx-auto">
+            A unified vision of sustainable luxury.
+          </p>
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/20 to-transparent mx-auto mt-8" />
+        </div>
       </div>
     </section>
   );

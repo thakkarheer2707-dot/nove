@@ -88,12 +88,15 @@ export default function ProductView({ product }: { product: Product }) {
       {/* Left: Image Viewer */}
       <div className="flex flex-col space-y-6 lg:sticky lg:top-32 h-fit">
         <div 
-          className={`relative aspect-[4/5] glass-panel rounded-[40px] flex items-center justify-center p-8 md:p-12 overflow-hidden group/viewer ${isZoomActive ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+          className={`relative aspect-[4/5] bg-gradient-to-br from-[#f8f6f4] via-[#faf9f6] to-[#f2f5f4] border border-black/[0.02] shadow-[0_20px_50px_rgba(0,0,0,0.02)] rounded-[40px_120px_40px_120px] flex items-center justify-center p-8 md:p-12 overflow-hidden group/viewer ${isZoomActive ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
           onMouseMove={handleMouseMove}
           onClick={() => !isDragging && setIsZoomActive(!isZoomActive)}
         >
+          {/* Subtle overlay texture grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+
           {/* Ambient Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.4)_0%,_transparent_75%)] pointer-events-none"></div>
           
           <AnimatePresence mode="wait" initial={false}>
             <motion.div

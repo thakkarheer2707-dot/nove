@@ -34,6 +34,32 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* High-performance GPU hardware acceleration promotion */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+/* Off-screen viewport render optimization */
+.section-render-optimize {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 600px;
+}
+
+/* Optimize font-rendering globally */
+* {
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Ultra responsive interaction delays */
+a, button, [role="button"] {
+  touch-action: manipulation;
+}
+
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(25px) saturate(200%);

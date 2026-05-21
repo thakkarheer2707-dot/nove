@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Globe, MessageCircle, Sparkles } from "lucide-react";
+import { ShieldCheck, Globe, MessageCircle, Compass } from "lucide-react";
 
 const FOOTER_LINKS = [
   { name: "Store", href: "/store" },
@@ -15,12 +15,12 @@ const FOOTER_LINKS = [
 
 const SOCIAL_LINKS = [
   { name: "Instagram", href: "#", icon: MessageCircle },
-  { name: "Pinterest", href: "#", icon: Sparkles },
+  { name: "Pinterest", href: "#", icon: Compass },
 ];
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#fbfbfd] border-t border-gray-100 py-20 px-6 md:px-12 mt-auto">
+    <footer className="w-full bg-[#fbfbfd] border-t border-gray-100 py-20 px-6 md:px-12 mt-auto section-render-optimize">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         <Link href="/" className="text-4xl font-serif text-[#1d1d1f] tracking-widest font-bold mb-10">
           NOVE

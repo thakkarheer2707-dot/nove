@@ -162,14 +162,17 @@ function ProductCard({ product }: { product: any }) {
           </div>
         </div>
         
-        <div className="relative w-full aspect-square mt-4 flex items-center justify-center p-8">
-          <div className="relative w-full h-full">
+        <div className="relative w-full aspect-square mt-4 flex items-center justify-center p-6 px-8 relative overflow-hidden">
+          {/* Artistic Organic Curved Canvas Backdrop */}
+          <div className="absolute inset-x-8 inset-y-4 bg-gradient-to-br from-[#f8f6f4] via-[#fcfbf9] to-[#f4f7f6] border border-black/[0.01] rounded-[48px_24px_64px_24px] pointer-events-none group-hover:rounded-[24px_64px_24px_64px] transition-all duration-700" />
+          
+          <div className="relative w-[85%] h-[85%] z-10 transition-transform duration-700 group-hover:scale-[1.04] group-hover:translate-y-[-5px]">
              <Image 
               src={defaultImage} 
               alt={product.name} 
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-contain product-image"
+              className="object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.05)] group-hover:drop-shadow-[0_20px_35px_rgba(0,0,0,0.08)] transition-all duration-700"
             />
           </div>
         </div>
