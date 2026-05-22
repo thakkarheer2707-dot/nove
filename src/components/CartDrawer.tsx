@@ -519,37 +519,10 @@ export default function CartDrawer() {
             {items.length > 0 && (
               <div className="p-8 border-t border-black/5 bg-white">
                 
-                {/* Payment Method Selector */}
-                <div className="mb-6 space-y-3">
-                  <button 
-                    onClick={() => setPaymentMethod("online")}
-                    className={`w-full flex items-center justify-between p-4 rounded-[20px] border transition-all ${
-                      paymentMethod === "online" ? "border-[#1d1d1f] bg-black/5 shadow-sm" : "border-gray-200 bg-transparent hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <CreditCard size={20} className={paymentMethod === "online" ? "text-[#1d1d1f]" : "text-gray-400"} />
-                      <span className={`text-sm font-bold ${paymentMethod === "online" ? "text-[#1d1d1f]" : "text-gray-500"}`}>Pay Online (UPI/Cards)</span>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "online" ? "border-[#1d1d1f]" : "border-gray-300"}`}>
-                      {paymentMethod === "online" && <div className="w-2 h-2 rounded-full bg-[#1d1d1f]" />}
-                    </div>
-                  </button>
-
-                  <button 
-                    onClick={() => setPaymentMethod("cod")}
-                    className={`w-full flex items-center justify-between p-4 rounded-[20px] border transition-all ${
-                      paymentMethod === "cod" ? "border-[#1d1d1f] bg-black/5 shadow-sm" : "border-gray-200 bg-transparent hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Truck size={20} className={paymentMethod === "cod" ? "text-[#1d1d1f]" : "text-gray-400"} />
-                      <span className={`text-sm font-bold ${paymentMethod === "cod" ? "text-[#1d1d1f]" : "text-gray-500"}`}>Cash on Delivery</span>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "cod" ? "border-[#1d1d1f]" : "border-gray-300"}`}>
-                      {paymentMethod === "cod" && <div className="w-2 h-2 rounded-full bg-[#1d1d1f]" />}
-                    </div>
-                  </button>
+                {/* Secure Payment Note */}
+                <div className="mb-6 bg-emerald-50/60 border border-emerald-100/60 p-4 rounded-[20px] flex items-center gap-3">
+                  <CreditCard size={18} className="text-emerald-700 flex-shrink-0" />
+                  <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">Secure Online Payment via Razorpay (UPI, Cards, NetBanking)</span>
                 </div>
 
                 <div className="flex justify-between text-[#1d1d1f] mb-6">
@@ -569,17 +542,20 @@ export default function CartDrawer() {
                     </>
                   ) : (
                     <>
-                      {paymentMethod === "online" ? <ShieldCheck size={18} /> : <Truck size={18} />}
-                      <span className="tracking-wide text-sm">
-                        {paymentMethod === "online" ? "Secure Checkout" : "Continue to Verify"}
-                      </span>
+                      <ShieldCheck size={18} />
+                      <span className="tracking-wide text-sm">Secure Checkout</span>
                       <ArrowRight size={18} />
                     </>
                   )}
                 </button>
-                <p className="text-center text-[10px] text-gray-400 uppercase tracking-widest mt-6 font-bold">
-                  {paymentMethod === "online" ? "256-bit SSL Encrypted · Powered by Razorpay" : "Verified 1-Click Checkout Experience"}
-                </p>
+                <div className="mt-5 text-center space-y-2">
+                  <p className="text-[9px] text-red-600/90 font-bold uppercase tracking-widest bg-red-50/50 py-1.5 px-3 rounded-full display-inline border border-red-100/30">
+                    ⚠ Purchase Policy: No Returns & No Exchanges
+                  </p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">
+                    256-bit SSL Encrypted · Powered by Razorpay
+                  </p>
+                </div>
               </div>
             )}
           </motion.div>

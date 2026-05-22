@@ -17,14 +17,14 @@ export default function PolicyPage() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-20 text-left">
-           <section className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
-              <RefreshCw size={32} strokeWidth={1.5} className="text-[#1d1d1f] mb-6" />
-              <h2 className="text-2xl font-serif text-[#1d1d1f] mb-4">Returns & Exchanges</h2>
+           <section className="bg-white p-10 rounded-[40px] border border-red-100 bg-red-50/5 shadow-sm">
+              <RefreshCw size={32} strokeWidth={1.5} className="text-red-600 mb-6" />
+              <h2 className="text-2xl font-serif text-[#1d1d1f] mb-4">No Returns & No Exchanges</h2>
               <p className="text-gray-500 font-light leading-relaxed mb-4">
-                 We offer a 14-day complimentary returns policy for all unworn NOVE masterpieces. Items must be in their original packaging with the digital certificate unassigned.
+                 Due to the highly exclusive nature of our hand-crafted artisan luxury pieces, **NOVE strictly operates under a No Returns and No Exchanges policy**.
               </p>
               <p className="text-gray-500 font-light leading-relaxed">
-                 To initiate a return, visit your profile or contact our concierge team. Refunds are processed within 5-7 business days of quality inspection.
+                 Every masterpiece undergoes meticulous double-layer quality control inspections before leaving our atelier to guarantee absolute perfection.
               </p>
            </section>
 
