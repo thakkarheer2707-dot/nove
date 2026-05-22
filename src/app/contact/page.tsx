@@ -7,10 +7,30 @@ import { Mail, Phone, MapPin, Send, MessageCircle, Clock } from "lucide-react";
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSending(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send message.");
+
+      setSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -157,12 +177,26 @@ export default function ContactPage() {
                   />
                 </div>
 
+                {error && (
+                  <p className="text-red-500 text-sm font-semibold mb-2">{error}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-3 bg-[#1d1d1f] text-white py-5 rounded-2xl font-semibold hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                  disabled={isSending}
+                  className="flex items-center justify-center gap-3 bg-[#1d1d1f] text-white py-5 rounded-2xl font-semibold hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-60"
                 >
-                  <Send size={18} />
-                  Send Message
+                  {isSending ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Sending…
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             )}
