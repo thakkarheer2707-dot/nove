@@ -44,9 +44,9 @@ export default function ContactPage() {
             </div>
 
             {[
-              { icon: Mail, label: "Email", value: "hello@nove.in", sub: "We reply within 24 hours." },
-              { icon: Phone, label: "Phone", value: "+91 98765 43210", sub: "Mon–Sat, 10am–7pm IST" },
-              { icon: MapPin, label: "Studio", value: "NOVE Studio, Vadodara", sub: "Gujarat, India 390 001" },
+              { icon: Mail, label: "Email", value: "Thakkarheer2707@gmail.com", sub: "We reply within 24 hours." },
+              { icon: Phone, label: "Phone", value: "+91 97699 99959", sub: "Mon–Sat, 10am–7pm IST" },
+              { icon: MapPin, label: "Studio", value: "NOVE Studio, Mumbai", sub: "Maharashtra, India" },
             ].map((info, i) => (
               <motion.div
                 key={info.label}
