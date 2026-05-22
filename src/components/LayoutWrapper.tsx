@@ -9,7 +9,6 @@ import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "./CartProvider";
 import { WishlistProvider } from "./WishlistProvider";
 import CartDrawer from "./CartDrawer";
-import MobileBottomNav from "./MobileBottomNav";
 import PageTransition from "./PageTransition";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -24,6 +23,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
               <SplashScreen 
                 key="splash" 
                 onComplete={() => setShowSplash(false)} 
+                
               />
             )}
           </AnimatePresence>
@@ -38,7 +38,6 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
           </main>
 
           <Footer />
-          <MobileBottomNav />
         </SmoothScroller>
       </CartProvider>
     </WishlistProvider>
