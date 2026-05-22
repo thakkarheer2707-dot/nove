@@ -10,7 +10,7 @@ const HERO_IMAGES = [
   "/products/Ember/ember_v3.png",
   "/products/Terra/te1_v2.png",
   "/products/Aqua/aq_v1.png",
-  "/products/Aqua/aqr_v1.png",
+  "/products/Ember/ember_4.png",
   "/products/Ember/ember_5.png",
 ];
 
@@ -70,7 +70,7 @@ export default function Home() {
             <div className="lg:col-span-7 w-full flex justify-center items-center">
               
               {/* Crescent/Organic Gallery Showcase Frame */}
-              <div className="relative w-full max-w-[480px] aspect-square md:aspect-[4/3] lg:aspect-square flex items-center justify-center bg-white/40 border border-white/60 shadow-[inset_0_4px_24px_rgba(255,255,255,0.4)] backdrop-blur-sm rounded-[60px_30px_90px_30px] md:rounded-[120px_60px_180px_60px] overflow-hidden group">
+              <div className="relative w-full max-w-[480px] aspect-square md:aspect-[4/3] lg:aspect-square flex items-center justify-center bg-gradient-to-br from-[#f6f2ee] via-[#fae6db] to-[#f0eee8] border border-orange-100/40 shadow-[inset_0_4px_24px_rgba(0,0,0,0.04)] rounded-[60px_30px_90px_30px] md:rounded-[120px_60px_180px_60px] overflow-hidden group">
                 
                 {/* Floating ambient backdrop halo */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.6)_0%,_transparent_75%)] pointer-events-none" />
@@ -92,6 +92,7 @@ export default function Home() {
                         src={HERO_IMAGES[currentIndex]} 
                         alt="NOVE Collection" 
                         fill 
+                        sizes="(max-width: 768px) 90vw, 40vw"
                         className="object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
                         priority
                       />
@@ -147,6 +148,7 @@ export default function Home() {
                     src="/products/Ember/Black/product_4.png" 
                     alt="Ember Series Purse" 
                     fill 
+                    sizes="(max-width: 768px) 80vw, 30vw"
                     className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
                   />
                 </div>
@@ -173,10 +175,11 @@ export default function Home() {
                 <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
                 <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
                   <Image 
-                    src="/products/Aqua/aqr_v1.png" 
+                    src="/products/Aqua/aq_v1.png" 
                     alt="Aqua Series Purse" 
                     fill 
-                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
+                    sizes="(max-width: 768px) 80vw, 30vw"
+                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)]"
                   />
                 </div>
               </div>
@@ -205,6 +208,7 @@ export default function Home() {
                     src="/products/Terra/te1_v2.png" 
                     alt="Terra Series Purse" 
                     fill 
+                    sizes="(max-width: 768px) 80vw, 30vw"
                     className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
                   />
                 </div>
@@ -231,9 +235,10 @@ export default function Home() {
                 <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
                 <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
                   <Image 
-                    src="/products/Aero/Black/ae_main.png" 
+                    src="/products/Aero/ae_v1.png" 
                     alt="Aero Series Purse" 
                     fill 
+                    sizes="(max-width: 768px) 80vw, 30vw"
                     className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
                   />
                 </div>
@@ -247,18 +252,18 @@ export default function Home() {
       {/* 2. Craftsmanship Narrative - High Performance Layout */}
       <section className="bg-white border-t border-black/5 py-24 px-6 w-full section-render-optimize">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="relative h-[45vh] md:h-[58vh] w-full flex items-center justify-center bg-gradient-to-br from-[#fcf9f6] via-[#f7f3ed] to-[#f0f4fd] border border-black/[0.02] shadow-[0_20px_50px_rgba(0,0,0,0.02)] rounded-[80px_40px_160px_40px] md:rounded-[120px_60px_200px_60px] p-12 overflow-hidden group">
+          <div className="relative h-[45vh] md:h-[58vh] w-full flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-[80px_40px_160px_40px] md:rounded-[120px_60px_200px_60px] p-12 overflow-hidden group">
             {/* Subtle overlay texture grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.5)_0%,_transparent_75%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.04)_0%,_transparent_75%)] pointer-events-none" />
             
             <div className="relative w-[85%] h-[85%] z-10 transition-transform duration-700 group-hover:scale-[1.04]">
               <Image 
-                src="/products/Aqua/aqr_v1.png" 
+                src="/products/Terra/terra_3.png" 
                 alt="Texture Detail" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.06)]"
+                className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
               />
             </div>
           </div>
