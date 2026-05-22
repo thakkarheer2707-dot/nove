@@ -213,7 +213,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Dynamic Organic Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
           {[
             { 
               label: "Gross Sales", 
@@ -262,19 +262,19 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
               whileHover={{ y: -6, scale: 1.01 }}
-              className={`${stat.bg} ${stat.border} border shadow-lg ${stat.shadow} rounded-[36px_18px_48px_18px] p-8 flex flex-col items-start backdrop-blur-sm transition-all duration-300 relative overflow-hidden group`}
+              className={`${stat.bg} ${stat.border} border shadow-lg ${stat.shadow} rounded-[28px_14px_36px_14px] p-4 sm:p-6 lg:p-8 flex flex-col items-start backdrop-blur-sm transition-all duration-300 relative overflow-hidden group`}
             >
               {/* Inner ambient shine */}
               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
-              <div className={`p-4 bg-white/90 border border-white/80 rounded-2xl mb-6 shadow-sm ${stat.color} transition-transform duration-500 group-hover:scale-110`}>
-                <stat.icon size={22} />
+              <div className={`p-3 sm:p-4 bg-white/90 border border-white/80 rounded-2xl mb-4 sm:mb-6 shadow-sm ${stat.color} transition-transform duration-500 group-hover:scale-110`}>
+                <stat.icon size={20} className="w-5 h-5" />
               </div>
               
-              <h3 className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1">{stat.label}</h3>
-              <div className="text-3xl font-bold tracking-tight mb-2 text-neutral-800 font-serif">{stat.value}</div>
+              <h3 className="text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1 line-clamp-1">{stat.label}</h3>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-2 text-neutral-800 font-serif line-clamp-1">{stat.value}</div>
               
-              <div className="text-[9px] bg-white/60 border border-white/40 px-2.5 py-1 rounded-full text-neutral-500 font-bold tracking-wider">
+              <div className="text-[8px] sm:text-[9px] bg-white/60 border border-white/40 px-2 sm:px-2.5 py-1 rounded-full text-neutral-500 font-bold tracking-wider uppercase mt-auto">
                 {stat.sub}
               </div>
             </motion.div>
