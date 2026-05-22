@@ -65,8 +65,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] pt-24 pb-20 px-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] pt-32 pb-24 px-6">
+      <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <motion.div
@@ -88,7 +88,7 @@ export default function ProfilePage() {
           </motion.button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Sidebar / Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -131,7 +131,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="md:col-span-2 space-y-6"
+            className="lg:col-span-2 space-y-6"
           >
             {user.isGuest && (
               <div className="bg-gradient-to-br from-[#1d1d1f] to-[#424245] text-white rounded-[32px] p-8 shadow-lg relative overflow-hidden">
