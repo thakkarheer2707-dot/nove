@@ -2,291 +2,448 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Feather, Droplets, Gem } from "lucide-react";
+import { ArrowRight, Feather, Droplets, Gem, Sparkles, Compass, ChevronRight, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const HERO_IMAGES = [
-  "/products/Ember/ember_v3.png",
-  "/products/Terra/te1_v2.png",
-  "/products/Aqua/aq_v1.png",
-  "/products/Ember/ember_4.png",
-  "/products/Ember/ember_5.png",
+const BANNERS = [
+  {
+    src: "/Banners/ban1.jpeg",
+    title: "Ember Series",
+    subtitle: "Edition 01",
+    tagline: "Quiet confidence and burning strength.",
+    href: "/store?collection=Ember+Series"
+  },
+  {
+    src: "/Banners/ban2.jpeg",
+    title: "Aqua Series",
+    subtitle: "Edition 02",
+    tagline: "Fluid, sculpted organic forms inspired by adaptive water contours.",
+    href: "/store?collection=Aqua+Series"
+  },
+  {
+    src: "/Banners/ban3.jpeg",
+    title: "Terra Series",
+    subtitle: "Edition 03",
+    tagline: "Resilient contours engineered for natural grounding and mobility.",
+    href: "/store?collection=Terra+Series"
+  },
+  {
+    src: "/Banners/ban4.jpeg",
+    title: "Aero Series",
+    subtitle: "Edition 04",
+    tagline: "Sleek weightlessness designed for ultimate minimalist simplicity.",
+    href: "/store?collection=Aero+Series"
+  }
 ];
 
 export default function Home() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [activeShowcase, setActiveShowcase] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
+  // 3D Parallax Tilt State
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [flarePos, setFlarePos] = useState({ x: 0, y: 0 });
+
+  // Auto-play Hero Carousel
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 5000); 
+      setDirection(1);
+      setHeroIndex((prev) => (prev + 1) % BANNERS.length);
+    }, 8000);
     return () => clearInterval(timer);
   }, []);
 
+  const nextSlide = () => {
+    setDirection(1);
+    setHeroIndex((prev) => (prev + 1) % BANNERS.length);
+  };
+
+  const prevSlide = () => {
+    setDirection(-1);
+    setHeroIndex((prev) => (prev - 1 + BANNERS.length) % BANNERS.length);
+  };
+
+  // Handle Mouse Tilt & Light Reflection Flare
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - card.left;
+    const y = e.clientY - card.top;
+    
+    // Relative coordinates centered at (0,0), ranging from -0.5 to 0.5
+    const relativeX = (x / card.width) - 0.5;
+    const relativeY = (y / card.height) - 0.5;
+    
+    setTilt({
+      x: relativeX * 6, // max 6 degrees of rotation on Y axis
+      y: relativeY * -6 // max 6 degrees of rotation on X axis
+    });
+    
+    setFlarePos({
+      x: (x / card.width) * 100,
+      y: (y / card.height) * 100
+    });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const scrollLookbook = (dir: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = window.innerWidth * 0.45;
+      scrollRef.current.scrollBy({
+        left: dir === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth"
+      });
+    }
+  };
+
+  // Custom 3D Slide Transition Variants
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? "100%" : "-100%",
+      opacity: 0,
+      scale: 0.98,
+      rotateY: dir > 0 ? 5 : -5,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      rotateY: 0,
+      transition: {
+        x: { type: "spring" as const, stiffness: 180, damping: 24 },
+        opacity: { duration: 0.4 },
+        scale: { duration: 0.4 },
+        rotateY: { duration: 0.4 }
+      }
+    },
+    exit: (dir: number) => ({
+      x: dir < 0 ? "100%" : "-100%",
+      opacity: 0,
+      scale: 0.98,
+      rotateY: dir < 0 ? 5 : -5,
+      transition: {
+        x: { type: "spring" as const, stiffness: 180, damping: 24 },
+        opacity: { duration: 0.4 },
+        scale: { duration: 0.4 },
+        rotateY: { duration: 0.4 }
+      }
+    })
+  };
+
   return (
-    <div className="flex flex-col bg-[#fbfbfd] min-h-screen">
-      {/* 1. High-Performance Artistic Asymmetrical Hero Banner */}
-      <section className="relative min-h-[90vh] md:min-h-[85vh] w-full flex flex-col justify-center px-4 md:px-8 pt-6 pb-12 bg-[#fbfbfd]">
-        
-        {/* Soft Background Static Glows (behind the curved canvas) */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(229,229,234,0.25)_0%,_transparent_70%)] mix-blend-multiply" />
-          <div className="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(229,229,234,0.3)_0%,_transparent_70%)] mix-blend-multiply" />
-        </div>
-
-        {/* The Shaped Banner Canvas Card */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto min-h-[75vh] md:min-h-[78vh] flex items-center bg-gradient-to-br from-[#f6f2ee] via-[#fae6db] to-[#f0f5fd] border border-black/[0.02] shadow-[0_30px_70px_rgba(0,0,0,0.03)] overflow-hidden rounded-[32px_80px_32px_80px] md:rounded-[40px_160px_40px_160px] p-6 md:p-16">
-          
-          {/* Subtle overlay texture grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full relative z-10">
-            
-            {/* Left Content (Text and CTA) */}
-            <div className="lg:col-span-5 flex flex-col items-start text-left space-y-6">
-              <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-orange-900/60 mb-2 block">NOVE LUXURY</span>
-              
-              <h1 className="text-5xl md:text-7xl font-sans font-bold tracking-tighter text-[#1d1d1f] leading-none">
-                Light <br/> as air.
-              </h1>
-              
-              <h2 className="text-lg md:text-xl font-serif text-gray-500 italic font-light max-w-sm leading-relaxed">
-                Premium Eucalyptus Leather. <br className="hidden md:block" /> The art of weightless elegance.
-              </h2>
-              
-              <div className="pt-4">
-                <Link 
-                  href="/store" 
-                  className="inline-flex items-center gap-4 bg-[#1d1d1f] hover:bg-black text-white px-10 py-4 rounded-full text-base font-bold tracking-tight shadow-xl shadow-black/10 active:scale-95 group transition-all"
-                >
-                  <span>Explore the Collection</span>
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Content (The Artistic Handbag Showcase Canvas) */}
-            <div className="lg:col-span-7 w-full flex justify-center items-center">
-              
-              {/* Crescent/Organic Gallery Showcase Frame */}
-              <div className="relative w-full max-w-[480px] aspect-square md:aspect-[4/3] lg:aspect-square flex items-center justify-center bg-gradient-to-br from-[#f6f2ee] via-[#fae6db] to-[#f0eee8] border border-orange-100/40 shadow-[inset_0_4px_24px_rgba(0,0,0,0.04)] rounded-[60px_30px_90px_30px] md:rounded-[120px_60px_180px_60px] overflow-hidden group">
-                
-                {/* Floating ambient backdrop halo */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.6)_0%,_transparent_75%)] pointer-events-none" />
-
-                {/* Handbag shadow */}
-                <div className="absolute bottom-[10%] w-[65%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-90" />
-
-                <div className="relative w-[75%] h-[75%]">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentIndex}
-                      initial={{ opacity: 0, scale: 0.9, y: 15 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 1.05, y: -15 }}
-                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      className="w-full h-full relative transition-transform duration-700 group-hover:scale-[1.04]"
-                    >
-                      <Image 
-                        src={HERO_IMAGES[currentIndex]} 
-                        alt="NOVE Collection" 
-                        fill 
-                        sizes="(max-width: 768px) 90vw, 40vw"
-                        className="object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
-                        priority
-                      />
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Gallery tag detail */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 bg-black/5 rounded-full border border-white/40 pointer-events-none">
-                  <div className="w-1.5 h-1.5 rounded-full bg-black/40 animate-pulse" />
-                  <span className="text-[9px] uppercase tracking-widest font-bold text-black/40">EDITION 0{currentIndex + 1}</span>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* 1.5 Curated Shaped Collection Banners */}
-      <section className="bg-[#fbfbfd] py-24 px-6 w-full border-t border-black/5">
+    <div className="flex flex-col bg-[#fafafc] min-h-screen overflow-x-hidden">
+      
+      {/* ── 1. ARTISTIC FULL-DISPLAY HERO CAROUSEL (3D TILT & LIGHT FLARE) ── */}
+      <section className="relative w-full py-10 md:py-16 px-4 md:px-8 bg-white border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="text-center mb-16">
-            <span className="text-xs tracking-[0.2em] uppercase font-bold text-gray-400 mb-4 block">CURATED EDITIONS</span>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#1d1d1f]">Sculpted proportions.</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          
+          {/* Perspective Container Wrapper */}
+          <div className="w-full [perspective:1200px]">
             
-            {/* Ember Banner */}
-            <Link 
-               href="/store?collection=Ember+Series"
-               className="group relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 min-h-[380px] bg-gradient-to-br from-[#fdf5f0] to-[#fae6db] border border-orange-100/30 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-orange-900/[0.03] active:scale-[0.99] rounded-[50px_20px_50px_20px] md:rounded-[100px_40px_100px_40px]"
+            {/* Main Interactive Framing Canvas with 3D Physics & Shimmer Reflection */}
+            <motion.div
+              onMouseMove={handleMouseMove}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              style={{
+                rotateY: tilt.x,
+                rotateX: tilt.y,
+                transformStyle: "preserve-3d"
+              }}
+              animate={{
+                rotateY: tilt.x,
+                rotateX: tilt.y
+              }}
+              className="relative w-full aspect-[16/9] md:aspect-[2.1/1] bg-[#fdfdfd] rounded-[28px] md:rounded-[44px] overflow-hidden border border-black/[0.04] shadow-[0_25px_60px_rgba(0,0,0,0.04)] group cursor-pointer transition-shadow hover:shadow-[0_35px_80px_rgba(0,0,0,0.06)]"
             >
-              <div className="z-10 max-w-xs text-left">
-                <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-orange-850 mb-3 block">01 / EMBER</span>
-                <h3 className="text-3xl font-bold text-[#1d1d1f] tracking-tight mb-3">Ember Series</h3>
-                <p className="text-[#8e8e93] text-sm font-light leading-relaxed">
-                  A silhouette of quiet confidence and burning strength.
-                </p>
-                <span className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-orange-950 group-hover:underline">
-                  <span>Shop Edition</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-              <div className="relative w-full md:w-[60%] h-[240px] mt-6 md:mt-0 flex items-center justify-center">
-                <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
-                <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
-                  <Image 
-                    src="/products/Ember/Black/product_4.png" 
-                    alt="Ember Series Purse" 
-                    fill 
-                    sizes="(max-width: 768px) 80vw, 30vw"
-                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
-                  />
-                </div>
-              </div>
-            </Link>
-
-            {/* Aqua Banner */}
-            <Link 
-               href="/store?collection=Aqua+Series"
-               className="group relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 min-h-[380px] bg-gradient-to-br from-[#f0f5fd] to-[#dbebfa] border border-blue-100/30 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/[0.03] active:scale-[0.99] rounded-[20px_50px_20px_50px] md:rounded-[40px_100px_40px_100px]"
-            >
-              <div className="z-10 max-w-xs text-left">
-                <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-blue-850 mb-3 block">02 / AQUA</span>
-                <h3 className="text-3xl font-bold text-[#1d1d1f] tracking-tight mb-3">Aqua Series</h3>
-                <p className="text-[#8e8e93] text-sm font-light leading-relaxed">
-                  Sculpted liquid contours inspired by adaptive, falling water.
-                </p>
-                <span className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-blue-950 group-hover:underline">
-                  <span>Shop Edition</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-              <div className="relative w-full md:w-[60%] h-[240px] mt-6 md:mt-0 flex items-center justify-center">
-                <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
-                <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
-                  <Image 
-                    src="/products/Aqua/aq_v1.png" 
-                    alt="Aqua Series Purse" 
-                    fill 
-                    sizes="(max-width: 768px) 80vw, 30vw"
-                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)]"
-                  />
-                </div>
-              </div>
-            </Link>
-
-            {/* Terra Banner */}
-            <Link 
-               href="/store?collection=Terra+Series"
-               className="group relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 min-h-[380px] bg-gradient-to-br from-[#f6f2ee] to-[#e8ded5] border border-amber-100/30 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-amber-900/[0.03] active:scale-[0.99] rounded-[30px_30px_60px_20px] md:rounded-[60px_60px_120px_40px]"
-            >
-              <div className="z-10 max-w-xs text-left">
-                <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-amber-850 mb-3 block">03 / TERRA</span>
-                <h3 className="text-3xl font-bold text-[#1d1d1f] tracking-tight mb-3">Terra Series</h3>
-                <p className="text-[#8e8e93] text-sm font-light leading-relaxed">
-                  Resilient structure crafted for grounding travel and daily motion.
-                </p>
-                <span className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-amber-950 group-hover:underline">
-                  <span>Shop Edition</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-              <div className="relative w-full md:w-[60%] h-[240px] mt-6 md:mt-0 flex items-center justify-center">
-                <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
-                <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
-                  <Image 
-                    src="/products/Terra/te1_v2.png" 
-                    alt="Terra Series Purse" 
-                    fill 
-                    sizes="(max-width: 768px) 80vw, 30vw"
-                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
-                  />
-                </div>
-              </div>
-            </Link>
-
-            {/* Aero Banner */}
-            <Link 
-               href="/store?collection=Aero+Series"
-               className="group relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 min-h-[380px] bg-gradient-to-br from-[#f3f3f5] to-[#e3e3e7] border border-gray-200/30 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-gray-900/[0.03] active:scale-[0.99] rounded-[60px_20px_30px_60px] md:rounded-[120px_40px_60px_120px]"
-            >
-              <div className="z-10 max-w-xs text-left">
-                <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-gray-700 mb-3 block">04 / AERO</span>
-                <h3 className="text-3xl font-bold text-[#1d1d1f] tracking-tight mb-3">Aero Series</h3>
-                <p className="text-[#8e8e93] text-sm font-light leading-relaxed">
-                  Sleek, weightless evening proportions designed for simplicity.
-                </p>
-                <span className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-gray-950 group-hover:underline">
-                  <span>Shop Edition</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-              <div className="relative w-full md:w-[60%] h-[240px] mt-6 md:mt-0 flex items-center justify-center">
-                <div className="absolute bottom-[5%] w-[60%] h-[20px] bg-black/[0.04] blur-lg rounded-full pointer-events-none group-hover:scale-95 transition-transform" />
-                <div className="relative w-[85%] h-[85%] transition-transform duration-500 group-hover:translate-y-[-10px] group-hover:scale-[1.03]">
-                  <Image 
-                    src="/products/Aero/ae_v1.png" 
-                    alt="Aero Series Purse" 
-                    fill 
-                    sizes="(max-width: 768px) 80vw, 30vw"
-                    className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.06)]"
-                  />
-                </div>
-              </div>
-            </Link>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Craftsmanship Narrative - High Performance Layout */}
-      <section className="bg-white border-t border-black/5 py-24 px-6 w-full section-render-optimize">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="relative h-[45vh] md:h-[58vh] w-full flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-[80px_40px_160px_40px] md:rounded-[120px_60px_200px_60px] p-12 overflow-hidden group">
-            {/* Subtle overlay texture grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.04)_0%,_transparent_75%)] pointer-events-none" />
-            
-            <div className="relative w-[85%] h-[85%] z-10 transition-transform duration-700 group-hover:scale-[1.04]">
-              <Image 
-                src="/products/Terra/terra_3.png" 
-                alt="Texture Detail" 
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+              
+              {/* Dynamic Liquid Glass Flare Overlay */}
+              <div 
+                className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-500 mix-blend-overlay"
+                style={{
+                  opacity: isHovered ? 0.8 : 0,
+                  background: `radial-gradient(circle 350px at ${flarePos.x}% ${flarePos.y}%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.05) 50%, transparent 100%)`
+                }}
               />
+
+              {/* Shimmer Border Glow (Artistic platinum line) */}
+              <div className="absolute inset-0 rounded-[28px] md:rounded-[44px] border-2 border-transparent group-hover:border-black/5 transition-colors z-20 pointer-events-none" />
+
+              {/* 3D Liquid Slideshow */}
+              <div className="absolute inset-0 w-full h-full [transform-style:preserve-3d]">
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                  <motion.div
+                    key={heroIndex}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="absolute inset-0 w-full h-full flex items-center justify-center"
+                    style={{ backfaceVisibility: "hidden" }}
+                  >
+                    <Image
+                      src={BANNERS[heroIndex].src}
+                      alt={BANNERS[heroIndex].title}
+                      fill
+                      priority
+                      className="object-contain w-full h-full select-none"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Minimal floating navigation elements inside banner */}
+              <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between items-center z-25 pointer-events-none">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevSlide();
+                  }}
+                  className="w-12 h-12 rounded-full bg-white/70 hover:bg-white backdrop-blur-md border border-black/5 flex items-center justify-center text-black shadow-md hover:scale-110 active:scale-95 transition-all pointer-events-auto cursor-pointer"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextSlide();
+                  }}
+                  className="w-12 h-12 rounded-full bg-white/70 hover:bg-white backdrop-blur-md border border-black/5 flex items-center justify-center text-black shadow-md hover:scale-110 active:scale-95 transition-all pointer-events-auto cursor-pointer"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* High-End Minimalist Active Tag */}
+              <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-white/80 backdrop-blur-md px-4.5 py-2 rounded-full border border-black/5 shadow-sm pointer-events-none">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-40"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#1d1d1f]">
+                  {BANNERS[heroIndex].subtitle} ACTIVE
+                </span>
+              </div>
+
+            </motion.div>
+          </div>
+
+          {/* Minimalist Context & Action Bar (Placed clean below to ensure zero overlap) */}
+          <div className="mt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4">
+            <div className="space-y-2 text-left">
+              <h1 className="text-2xl md:text-3xl font-serif text-[#1d1d1f] font-semibold tracking-tight">
+                {BANNERS[heroIndex].title}
+              </h1>
+              <p className="text-gray-400 font-light text-sm max-w-xl leading-relaxed">
+                {BANNERS[heroIndex].tagline}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Slide Indicators */}
+              <div className="flex items-center gap-2 mr-4">
+                {BANNERS.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setDirection(idx > heroIndex ? 1 : -1);
+                      setHeroIndex(idx);
+                    }}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${heroIndex === idx ? 'w-8 bg-black' : 'w-1.5 bg-gray-200 hover:bg-gray-300'}`}
+                  />
+                ))}
+              </div>
+
+              <Link
+                href={BANNERS[heroIndex].href}
+                className="inline-flex items-center gap-3 bg-[#1d1d1f] hover:bg-black text-white px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm active:scale-[0.98] transition-all group cursor-pointer"
+              >
+                <span>Shop Edition</span>
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── 2. Curated Landscape Lookbook Track ── */}
+      <section className="bg-white py-24 w-full border-b border-black/5">
+        <div className="max-w-7xl mx-auto w-full">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 px-6 gap-8">
+            <div className="max-w-xl text-left">
+              <span className="text-xs tracking-[0.3em] uppercase font-bold text-gray-400 mb-3 block">ARTISTIC PORTFOLIO</span>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#1d1d1f] leading-none">
+                Curated Chapters.
+              </h2>
+            </div>
+            
+            {/* Sliding Track Controls */}
+            <div className="flex gap-3">
+              <button 
+                onClick={() => scrollLookbook("left")}
+                className="w-12 h-12 rounded-full border border-gray-200 hover:border-black flex items-center justify-center text-gray-400 hover:text-black transition-colors cursor-pointer"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                onClick={() => scrollLookbook("right")}
+                className="w-12 h-12 rounded-full border border-gray-200 hover:border-black flex items-center justify-center text-gray-400 hover:text-black transition-colors cursor-pointer"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Lookbook Horizontal scrolling track */}
+          <div 
+            ref={scrollRef}
+            className="flex overflow-x-auto scrollbar-none gap-8 px-6 md:px-12 py-4 snap-x snap-mandatory"
+          >
+            {BANNERS.map((banner, idx) => (
+              <div 
+                key={idx}
+                className="w-[85vw] sm:w-[60vw] md:w-[48vw] lg:w-[42vw] flex-shrink-0 snap-start space-y-6"
+              >
+                {/* 100% Display Uncropped banner card */}
+                <div className="relative w-full aspect-[16/9] bg-[#fbfbfd] rounded-[20px] overflow-hidden border border-black/[0.04] shadow-sm">
+                  <Image
+                    src={banner.src}
+                    alt={banner.title}
+                    fill
+                    sizes="(max-width: 768px) 80vw, 40vw"
+                    className="object-contain w-full h-full transition-transform duration-700 hover:scale-[1.015]"
+                  />
+                </div>
+
+                {/* Details */}
+                <div className="text-left space-y-3 px-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-gray-400">
+                      {banner.subtitle}
+                    </span>
+                    <div className="h-1 w-1 rounded-full bg-gray-300" />
+                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+                      Sculpted Silhouette
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold tracking-tight text-[#1d1d1f]">{banner.title}</h3>
+                  <p className="text-gray-400 text-sm font-light leading-relaxed max-w-sm">
+                    {banner.tagline}
+                  </p>
+
+                  <div className="pt-2">
+                    <Link
+                      href={banner.href}
+                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black hover:underline group cursor-pointer"
+                    >
+                      <span>Shop Collection</span>
+                      <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── 3. Craftsmanship Split Showcase ── */}
+      <section className="bg-white py-24 px-6 w-full border-b border-black/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          
+          <div className="relative aspect-[16/9] md:aspect-[1.8/1] lg:aspect-[1.5/1] w-full flex items-center justify-center bg-[#fbfbfd] border border-black/[0.03] shadow-md rounded-[24px] md:rounded-[40px] overflow-hidden group">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeShowcase}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <Image 
+                  src={BANNERS[activeShowcase].src} 
+                  alt="Showcase detail" 
+                  fill
+                  className="object-contain w-full h-full"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Quick Interactive Thumbnail Buttons Overlaid */}
+            <div className="absolute bottom-4 left-4 right-4 z-20 bg-white/80 backdrop-blur-md p-3 rounded-2xl border border-black/5 flex items-center justify-between gap-4 shadow-sm">
+              <span className="text-[9px] text-gray-500 tracking-wider uppercase font-bold hidden sm:inline">Craftsmanship Perspectives</span>
+              <div className="flex gap-2">
+                {BANNERS.map((ban, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveShowcase(idx)}
+                    className={`relative w-10 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${activeShowcase === idx ? 'border-black scale-105' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  >
+                    <Image src={ban.src} alt="Thumb" fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           
-          <div className="flex flex-col justify-center max-w-xl">
-            <span className="text-xs tracking-[0.2em] uppercase font-bold text-gray-400 mb-4 block">The Feel</span>
-            <h3 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1d1d1f] mb-6 leading-tight">
-              Liquid glass contours that catch the light.
+          <div className="flex flex-col justify-center text-left max-w-xl">
+            <span className="text-xs tracking-[0.3em] uppercase font-bold text-gray-400 mb-4 block">OUR PHILOSOPHY</span>
+            <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-[#1d1d1f] mb-6 leading-tight">
+              Eucalyptus leather and premium fluid curves.
             </h3>
-            <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-light mb-8">
-              Every NOVE handbag is sculpted, not just stitched. By analyzing the way light wraps around curved glass, we developed a silhouette that feels entirely fluid in motion while resting comfortably against your side.
+            <p className="text-lg text-gray-500 leading-relaxed font-light mb-8">
+              By rethinking modern proportions, we have developed a weightless standard. Using carbon-neutral derivatives, each silhouette is crafted to blend architectural structure with adaptive fluid contours.
             </p>
-            <div className="h-[2px] w-16 bg-black/5" />
+            
+            {/* Craftsmanship Features List */}
+            <div className="space-y-6 border-t border-black/5 pt-8">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-950 flex-shrink-0">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#1d1d1f] mb-1">Liquid Proportions</h4>
+                  <p className="text-sm text-gray-400 font-light">Every handbag is sculpted to capture natural evening light seamlessly.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-950 flex-shrink-0">
+                  <Compass size={18} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#1d1d1f] mb-1">Insured Concierge Delivery</h4>
+                  <p className="text-sm text-gray-400 font-light">Insured white-glove delivery straight to your artisan portal.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Why NOVE Bento Box - Fast CSS Layout */}
-      <section className="bg-[#fbfbfd] border-t border-black/5 py-24 px-6 w-full section-render-optimize">
+      {/* ── 4. INNOVATION BENTO GRID ── */}
+      <section className="bg-[#fbfbfd] py-24 px-6 w-full">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="text-center mb-16">
-            <span className="text-xs tracking-[0.2em] uppercase font-bold text-gray-400 mb-4 block">Innovation</span>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#1d1d1f]">Designed differently.</h2>
+          <div className="text-center mb-20">
+            <span className="text-xs tracking-[0.3em] uppercase font-bold text-gray-400 mb-4 block">DESIGNED SYSTEM</span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#1d1d1f]">Designed differently.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto">
@@ -332,7 +489,7 @@ export default function Home() {
                  <h4 className="text-2xl font-bold mb-6 text-[#1d1d1f] tracking-tight">Ready to feel it?</h4>
                  <Link 
                    href="/store" 
-                   className="inline-flex rounded-full bg-[#1d1d1f] hover:bg-black text-white px-10 py-4 font-bold tracking-tight shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
+                   className="inline-flex rounded-full bg-[#1d1d1f] hover:bg-black text-white px-10 py-4 font-bold tracking-tight shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                  >
                    Go to Store
                  </Link>
@@ -351,4 +508,3 @@ export default function Home() {
     </div>
   );
 }
-

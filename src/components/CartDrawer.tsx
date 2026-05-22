@@ -70,17 +70,9 @@ export default function CartDrawer() {
     }
 
     if (paymentMethod === "cod") {
-      // Direct placement for COD (Guest or User)
-      setIsProcessing(true);
-      try {
-        await recordOrder((user && !user.isGuest) ? user.email : address.email);
-        setPaymentSuccess(true);
-        if (clearCart) clearCart();
-      } catch (err) {
-        alert("Failed to place order. Please try again.");
-      } finally {
-        setIsProcessing(false);
-      }
+      const orderEmail = (user && !user.isGuest) ? user.email : address.email;
+      setEmail(orderEmail || "");
+      setAuthStep("email");
       return;
     }
 
@@ -359,15 +351,118 @@ export default function CartDrawer() {
                             const isEmailValid = (user && !user.isGuest) || (address.email && address.email.includes("@"));
                             if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
                               setShowAddressForm(false);
+                              // Auto checkout immediately to secure payment/verification step
+                              setTimeout(() => handleCheckout(), 100);
                             } else {
                               alert("Please complete every field accurately (ensure valid email, pincode and phone number).");
                             }
                           }}
-                          className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98]"
+                          className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] cursor-pointer"
                         >
                           {paymentMethod === "online" ? "Save & Continue to Payment" : "Save & Place Order"}
                         </button>
                      </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ── EMAIL/OTP VERIFICATION OVERLAY ── */}
+            <AnimatePresence>
+              {authStep !== "idle" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="absolute inset-0 bg-[#fbfbfd] z-40 flex flex-col p-8"
+                >
+                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-black/5 pt-2">
+                    <h2 className="text-xl font-bold text-[#1d1d1f] tracking-widest uppercase">
+                      {authStep === "email" ? "Verify Email" : "Verification"}
+                    </h2>
+                    <button onClick={() => setAuthStep("idle")} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full cursor-pointer">
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 space-y-8">
+                    {authError && (
+                      <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-xs font-semibold leading-relaxed">
+                        {authError}
+                      </div>
+                    )}
+
+                    {authStep === "email" ? (
+                      <>
+                        <p className="text-gray-500 font-medium text-sm leading-relaxed">
+                          To protect against fraudulent orders, Cash on Delivery requires email verification. We will send a 4-digit code.
+                        </p>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Email Address</label>
+                          <div className="relative">
+                            <input 
+                              type="email"
+                              placeholder="you@example.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:outline-none transition-all shadow-sm"
+                            />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                          </div>
+                        </div>
+
+                        <div className="pt-8">
+                          <button
+                            onClick={handleSendOtp}
+                            disabled={isProcessing}
+                            className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            {isProcessing && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                            <span>Send Verification Code</span>
+                            <ArrowRight size={16} />
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-gray-500 font-medium text-sm leading-relaxed">
+                          We have sent a verification code to <span className="text-black font-semibold">{email}</span>. Please enter it below.
+                        </p>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Verification Code</label>
+                          <div className="relative">
+                            <input 
+                              type="text"
+                              placeholder="Ex: 1234"
+                              maxLength={6}
+                              value={otp}
+                              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 pl-12 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:outline-none transition-all tracking-[0.4em] font-mono text-center text-lg shadow-sm"
+                            />
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                          </div>
+                        </div>
+
+                        <div className="pt-8 flex flex-col gap-4">
+                          <button
+                            onClick={handleVerifyOtp}
+                            disabled={isProcessing}
+                            className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            {isProcessing && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                            <span>Verify & Place Order</span>
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={() => setAuthStep("email")}
+                            className="text-xs text-gray-400 hover:text-black font-semibold uppercase tracking-wider text-center cursor-pointer"
+                          >
+                            Back to Email
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -378,7 +473,7 @@ export default function CartDrawer() {
               <h2 className="text-2xl font-bold text-[#1d1d1f] tracking-tight">Your Bag.</h2>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="p-2 text-gray-400 hover:text-[#1d1d1f] bg-black/5 rounded-full transition-colors"
+                className="p-2 text-gray-400 hover:text-[#1d1d1f] bg-black/5 rounded-full transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>

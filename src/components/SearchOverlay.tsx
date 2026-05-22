@@ -116,11 +116,11 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                    <div>
                       <h4 className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-6">Popular Searches</h4>
                       <div className="flex flex-wrap gap-3">
-                         {['Terra', 'Midnight', 'Classic', 'Artisan'].map(tag => (
+                         {['Ember', 'Aqua', 'Aero', 'Terra'].map(tag => (
                            <button 
                             key={tag}
                             onClick={() => setQuery(tag)}
-                            className="px-6 py-2 rounded-full border border-gray-100 text-sm text-gray-600 hover:border-[#1d1d1f] hover:text-[#1d1d1f] transition-all"
+                            className="px-6 py-2 rounded-full border border-gray-100 text-sm text-gray-600 hover:border-[#1d1d1f] hover:text-[#1d1d1f] transition-all cursor-pointer"
                            >
                             {tag}
                            </button>

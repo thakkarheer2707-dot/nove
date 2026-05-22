@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import supabase from "@/lib/supabase";
+import { login } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -13,11 +14,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const trimmedEmail = email.toLowerCase().trim();
+
     // Check if user already exists
     const { data: existingUser } = await supabase
       .from("users")
       .select("id")
-      .eq("email", email.toLowerCase().trim())
+      .eq("email", trimmedEmail)
       .single();
 
     if (existingUser) {
@@ -32,22 +35,38 @@ export async function POST(request: Request) {
     const derivedKey = crypto.scryptSync(password, salt, 64).toString("hex");
     const hashedPassword = `${salt}:${derivedKey}`;
 
-    const { error } = await supabase.from("users").insert({
-      name,
-      email: email.toLowerCase().trim(),
-      password: hashedPassword,
-    });
+    const { data: newUser, error } = await supabase
+      .from("users")
+      .insert({
+        name,
+        email: trimmedEmail,
+        password: hashedPassword,
+        role: "user"
+      })
+      .select("id, name, email, role")
+      .single();
 
-    if (error) {
+    if (error || !newUser) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: "Failed to create account." }, { status: 500 });
     }
 
-    console.log(`[AUTH] Registered new user: ${email}`);
+    // Automatically establish Next.js session cookie
+    const userData = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      isAdmin: false,
+    };
+
+    await login(userData);
+
+    console.log(`[AUTH] Registered and logged in new user: ${trimmedEmail}`);
 
     return NextResponse.json({
       success: true,
-      message: "Account created successfully",
+      user: userData,
+      message: "Account created and signed in successfully",
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -57,3 +76,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

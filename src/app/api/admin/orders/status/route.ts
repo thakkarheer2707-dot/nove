@@ -9,10 +9,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Order ID and new status are required" }, { status: 400 });
     }
 
-    // 1. Update status in Supabase
+    // 1. Update status in Supabase (Omit non-existent updated_at column to avoid PGRST204)
     const { data: updatedOrder, error } = await supabase
       .from("orders")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: newStatus })
       .eq("id", orderId)
       .select()
       .single();
@@ -50,8 +50,19 @@ export async function POST(request: Request) {
         statusDescription = "Your artisan masterpiece has arrived. We hope it exceeds your every expectation.";
       }
 
-      const itemsHtml = (updatedOrder.items as Array<{ name: string; color: string }>)
-        .map((item) => `<li>${item.name} (${item.color})</li>`)
+      let itemsArray: any[] = [];
+      if (typeof updatedOrder.items === "string") {
+        try {
+          itemsArray = JSON.parse(updatedOrder.items);
+        } catch {
+          itemsArray = [];
+        }
+      } else if (Array.isArray(updatedOrder.items)) {
+        itemsArray = updatedOrder.items;
+      }
+
+      const itemsHtml = itemsArray
+        .map((item: any) => `<li>${item.name || "NOVE Selection"} (${item.color || "Standard Edition"})</li>`)
         .join("");
 
       await transporter.sendMail({
