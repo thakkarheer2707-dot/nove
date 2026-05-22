@@ -350,15 +350,54 @@ export default function LoginPage() {
                 <div className="space-y-3 pt-2">
                   <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Choose an Account</p>
                   
+                  {/* Heer Thakkar profile */}
+                  <button
+                    type="button"
+                    onClick={() => handleGoogleSignInSubmit("Thakkarheer2707@gmail.com", "Heer Thakkar")}
+                    disabled={googleLoading}
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 hover:border-gray-300 rounded-2xl hover:bg-white transition-all text-left group disabled:opacity-75 cursor-pointer shadow-sm mb-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center font-bold text-amber-600 text-sm">
+                        H
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-[#1d1d1f]">Heer Thakkar</p>
+                        <p className="text-xs text-gray-400">Thakkarheer2707@gmail.com</p>
+                      </div>
+                    </div>
+                    {googleLoading ? <Loader2 size={16} className="animate-spin text-gray-300" /> : <ArrowRight size={16} className="text-gray-300 group-hover:translate-x-1 group-hover:text-black transition-all" />}
+                  </button>
+
+                  {/* Nove Admin profile */}
+                  <button
+                    type="button"
+                    onClick={() => handleGoogleSignInSubmit("admin@nove.in", "Nove Admin")}
+                    disabled={googleLoading}
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 hover:border-gray-300 rounded-2xl hover:bg-white transition-all text-left group disabled:opacity-75 cursor-pointer shadow-sm mb-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-600 text-sm">
+                        A
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-[#1d1d1f]">Nove Admin (Store Owner)</p>
+                        <p className="text-xs text-gray-400">admin@nove.in</p>
+                      </div>
+                    </div>
+                    {googleLoading ? <Loader2 size={16} className="animate-spin text-gray-300" /> : <ArrowRight size={16} className="text-gray-300 group-hover:translate-x-1 group-hover:text-black transition-all" />}
+                  </button>
+
                   {/* Primary user account option */}
                   <button
+                    type="button"
                     onClick={() => handleGoogleSignInSubmit("hemrajsinh6212@gmail.com", "hemraj")}
                     disabled={googleLoading}
-                    className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 hover:border-gray-300 rounded-2xl hover:bg-white transition-all text-left group disabled:opacity-75 cursor-pointer"
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 hover:border-gray-300 rounded-2xl hover:bg-white transition-all text-left group disabled:opacity-75 cursor-pointer shadow-sm"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600 text-sm">
-                        H
+                        M
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[#1d1d1f]">hemraj</p>
