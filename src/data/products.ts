@@ -36,9 +36,11 @@ export const products: Product[] = [
       {
         color: "Black",
         images: [
-          "/products/Ember/Black/product_1.png",
-          "/products/Ember/Black/img3.jpeg",
-          "/products/Ember/Black/img4.jpeg"
+          "/products/Updates/black1.jpeg",
+          "/products/Updates/black2.jpeg",
+          "/products/Updates/black3.jpeg",
+          "/products/Updates/black4.jpeg",
+          "/products/Updates/black5.jpeg"
         ],
         price: 5999
       },
