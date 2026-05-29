@@ -5,7 +5,7 @@ import SplashScreen from "./SplashScreen";
 import Navigation from "./Navigation";
 import Footer from "./Footer";
 import SmoothScroller from "./SmoothScroller";
-import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { CartProvider } from "./CartProvider";
 import { WishlistProvider } from "./WishlistProvider";
 import CartDrawer from "./CartDrawer";
@@ -18,26 +18,29 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     <WishlistProvider>
       <CartProvider>
         <SmoothScroller>
-          <AnimatePresence mode="wait">
-            {showSplash && (
-              <SplashScreen 
-                key="splash" 
-                onComplete={() => setShowSplash(false)} 
-                
-              />
-            )}
-          </AnimatePresence>
-          
-          <Navigation />
-          <CartDrawer />
-          
-          <main className="flex-grow pt-16 min-h-screen">
-            <PageTransition>
-              {children}
-            </PageTransition>
-          </main>
+          {showSplash && (
+            <SplashScreen 
+              key="splash" 
+              onComplete={() => setShowSplash(false)} 
+            />
+          )}
 
-          <Footer />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showSplash ? 0 : 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <Navigation />
+            <CartDrawer />
+            
+            <main className="flex-grow pt-16 min-h-screen">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </main>
+
+            <Footer />
+          </motion.div>
         </SmoothScroller>
       </CartProvider>
     </WishlistProvider>

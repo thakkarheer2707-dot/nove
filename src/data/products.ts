@@ -37,12 +37,8 @@ export const products: Product[] = [
         color: "Black",
         images: [
           "/products/Ember/Black/product_1.png",
-          "/products/Ember/Black/product_4.png",
-          "/products/Ember/Black/img1.jpeg",
-          "/products/Ember/Black/img2.jpeg",
           "/products/Ember/Black/img3.jpeg",
-          "/products/Ember/Black/img4.jpeg",
-          "/products/Ember/Black/img5.jpeg"
+          "/products/Ember/Black/img4.jpeg"
         ],
         price: 5999
       },
@@ -51,11 +47,6 @@ export const products: Product[] = [
         images: [
           "/products/Ember/ember_5.png",
           "/products/Ember/ember_2.png",
-          "/products/Ember/ember_3.png",
-          "/products/Ember/ember_4.png",
-          "/products/Ember/OliveGreen/img1.jpeg",
-          "/products/Ember/OliveGreen/img2.jpeg",
-          "/products/Ember/OliveGreen/img3.jpeg",
           "/products/Ember/OliveGreen/img4.jpeg",
           "/products/Ember/OliveGreen/img5.jpeg"
         ],
@@ -80,11 +71,8 @@ export const products: Product[] = [
         color: "White",
         images: [
           "/products/Aqua/CherryWhite/aq_main.png",
-          "/products/Aqua/CherryWhite/img1.jpeg",
           "/products/Aqua/CherryWhite/img2.jpeg",
           "/products/Aqua/CherryWhite/img3.jpeg",
-          "/products/Aqua/CherryWhite/img4.jpeg",
-          "/products/Aqua/CherryWhite/img5.jpeg",
           "/products/Aqua/CherryWhite/img6.jpeg"
         ],
         price: 5999
@@ -113,8 +101,6 @@ export const products: Product[] = [
         color: "Black",
         images: [
           "/products/Aero/Black/ae_main.png",
-          "/products/Aero/Black/img1.jpeg",
-          "/products/Aero/Black/img2.jpeg",
           "/products/Aero/Black/img3.jpeg",
           "/products/Aero/Black/img4.jpeg",
           "/products/Aero/Black/img5.jpeg"
@@ -127,11 +113,7 @@ export const products: Product[] = [
           "/products/Aero/aero_4.jpeg",
           "/products/Aero/aero_1.jpeg",
           "/products/Aero/aero_3.jpeg",
-          "/products/Aero/aero_5.jpeg",
-          "/products/Aero/DustyPink/img1.jpeg",
-          "/products/Aero/DustyPink/img2.jpeg",
-          "/products/Aero/DustyPink/img3.jpeg",
-          "/products/Aero/DustyPink/img4.jpeg"
+          "/products/Aero/aero_5.jpeg"
         ],
         price: 5999
       }
@@ -153,9 +135,8 @@ export const products: Product[] = [
       {
         color: "White",
         images: [
-          "/products/Terra/White/img1.jpeg",
-          "/products/Terra/White/img2.jpeg",
           "/products/Terra/White/img3.jpeg",
+          "/products/Terra/White/img2.jpeg",
           "/products/Terra/White/img4.jpeg"
         ],
         price: 5999

@@ -7,33 +7,34 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 const BANNERS = [
+
   {
-    src: "/Banners/ban1.jpeg",
-    title: "Ember Series",
-    subtitle: "Edition 01",
-    tagline: "Quiet confidence and burning strength.",
-    href: "/store?collection=Ember+Series"
+    src: "/Banners/newban2.jpeg",
+    title: "The Full Collection",
+    subtitle: "Explore All",
+    tagline: "Four silhouettes. Endless possibilities. One signature luxury.",
+    href: "/store"
   },
   {
-    src: "/Banners/ban2.jpeg",
-    title: "Aqua Series",
-    subtitle: "Edition 02",
-    tagline: "Fluid, sculpted organic forms inspired by adaptive water contours.",
-    href: "/store?collection=Aqua+Series"
+    src: "/Banners/newban3.jpeg",
+    title: "The Buckle Edit",
+    subtitle: "New Season",
+    tagline: "Structured elegance with a modern edge — designed for every day.",
+    href: "/store"
   },
   {
-    src: "/Banners/ban3.jpeg",
-    title: "Terra Series",
-    subtitle: "Edition 03",
-    tagline: "Resilient contours engineered for natural grounding and mobility.",
-    href: "/store?collection=Terra+Series"
+    src: "/Banners/newban4.jpeg",
+    title: "The Braided Tote",
+    subtitle: "Signature Piece",
+    tagline: "Woven craftsmanship meets premium simplicity in every stitch.",
+    href: "/store"
   },
   {
-    src: "/Banners/ban4.jpeg",
-    title: "Aero Series",
-    subtitle: "Edition 04",
-    tagline: "Sleek weightlessness designed for ultimate minimalist simplicity.",
-    href: "/store?collection=Aero+Series"
+    src: "/Banners/newban5.jpeg",
+    title: "The Petal Flap",
+    subtitle: "Limited Edition",
+    tagline: "Soft blush hues and sculpted curves — effortlessly feminine.",
+    href: "/store"
   }
 ];
 
@@ -72,16 +73,16 @@ export default function Home() {
     const card = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - card.left;
     const y = e.clientY - card.top;
-    
+
     // Relative coordinates centered at (0,0), ranging from -0.5 to 0.5
     const relativeX = (x / card.width) - 0.5;
     const relativeY = (y / card.height) - 0.5;
-    
+
     setTilt({
       x: relativeX * 6, // max 6 degrees of rotation on Y axis
       y: relativeY * -6 // max 6 degrees of rotation on X axis
     });
-    
+
     setFlarePos({
       x: (x / card.width) * 100,
       y: (y / card.height) * 100
@@ -143,14 +144,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col bg-[#fafafc] min-h-screen overflow-x-hidden">
-      
+
       {/* ── 1. ARTISTIC FULL-DISPLAY HERO CAROUSEL (3D TILT & LIGHT FLARE) ── */}
       <section className="relative w-full py-10 md:py-16 px-4 md:px-8 bg-white border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full">
-          
+
           {/* Perspective Container Wrapper */}
           <div className="w-full [perspective:1200px]">
-            
+
             {/* Main Interactive Framing Canvas with 3D Physics & Shimmer Reflection */}
             <motion.div
               onMouseMove={handleMouseMove}
@@ -167,9 +168,9 @@ export default function Home() {
               }}
               className="relative w-full aspect-[16/9] md:aspect-[2.1/1] bg-[#fdfdfd] rounded-[28px] md:rounded-[44px] overflow-hidden border border-black/[0.04] shadow-[0_25px_60px_rgba(0,0,0,0.04)] group cursor-pointer transition-shadow hover:shadow-[0_35px_80px_rgba(0,0,0,0.06)]"
             >
-              
+
               {/* Dynamic Liquid Glass Flare Overlay */}
-              <div 
+              <div
                 className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-500 mix-blend-overlay"
                 style={{
                   opacity: isHovered ? 0.8 : 0,
@@ -228,10 +229,6 @@ export default function Home() {
 
               {/* High-End Minimalist Active Tag */}
               <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-white/80 backdrop-blur-md px-4.5 py-2 rounded-full border border-black/5 shadow-sm pointer-events-none">
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-40"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
-                </span>
                 <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#1d1d1f]">
                   {BANNERS[heroIndex].subtitle} ACTIVE
                 </span>
@@ -279,94 +276,71 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 2. Curated Landscape Lookbook Track ── */}
+      {/* ── 2. The NOVE Story Section ── */}
       <section className="bg-white py-24 w-full border-b border-black/5">
-        <div className="max-w-7xl mx-auto w-full">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 px-6 gap-8">
-            <div className="max-w-xl text-left">
-              <span className="text-xs tracking-[0.3em] uppercase font-bold text-gray-400 mb-3 block">ARTISTIC PORTFOLIO</span>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#1d1d1f] leading-none">
-                Curated Chapters.
-              </h2>
-            </div>
-            
-            {/* Sliding Track Controls */}
-            <div className="flex gap-3">
-              <button 
-                onClick={() => scrollLookbook("left")}
-                className="w-12 h-12 rounded-full border border-gray-200 hover:border-black flex items-center justify-center text-gray-400 hover:text-black transition-colors cursor-pointer"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button 
-                onClick={() => scrollLookbook("right")}
-                className="w-12 h-12 rounded-full border border-gray-200 hover:border-black flex items-center justify-center text-gray-400 hover:text-black transition-colors cursor-pointer"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
-
-          {/* Lookbook Horizontal scrolling track */}
-          <div 
-            ref={scrollRef}
-            className="flex overflow-x-auto scrollbar-none gap-8 px-6 md:px-12 py-4 snap-x snap-mandatory"
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="space-y-16"
           >
-            {BANNERS.map((banner, idx) => (
-              <div 
-                key={idx}
-                className="w-[85vw] sm:w-[60vw] md:w-[48vw] lg:w-[42vw] flex-shrink-0 snap-start space-y-6"
-              >
-                {/* 100% Display Uncropped banner card */}
-                <div className="relative w-full aspect-[16/9] bg-[#fbfbfd] rounded-[20px] overflow-hidden border border-black/[0.04] shadow-sm">
-                  <Image
-                    src={banner.src}
-                    alt={banner.title}
-                    fill
-                    sizes="(max-width: 768px) 80vw, 40vw"
-                    className="object-contain w-full h-full transition-transform duration-700 hover:scale-[1.015]"
-                  />
-                </div>
+            <div className="space-y-4">
+              <span className="text-[11px] uppercase tracking-[0.3em] text-gray-400 font-bold block">About NOVE</span>
+              <h2 className="text-4xl md:text-5xl font-serif text-[#1d1d1f] font-semibold tracking-tight">
+                Our Philosophy &amp; Vision
+              </h2>
+              <div className="w-12 h-[1px] bg-black mx-auto mt-6"></div>
+            </div>
 
-                {/* Details */}
-                <div className="text-left space-y-3 px-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-gray-400">
-                      {banner.subtitle}
-                    </span>
-                    <div className="h-1 w-1 rounded-full bg-gray-300" />
-                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
-                      Sculpted Silhouette
-                    </span>
-                  </div>
+            <div className="space-y-10 text-lg font-light leading-relaxed text-[#424245] max-w-3xl mx-auto text-justify sm:text-center">
+              <p className="text-xl font-medium text-black leading-snug">
+                NOVE started with a simple thought — what if luxury could feel good in every way? <br className="hidden md:inline" />
+                <span className="text-gray-400 font-light text-base block mt-2">
+                  Not just in how it looks, but in how it’s made and the impact it leaves behind. We created NOVE for people who care — people who think before they buy, who value quality over quantity, and who want their choices to reflect their values.
+                </span>
+              </p>
 
-                  <h3 className="text-xl font-bold tracking-tight text-[#1d1d1f]">{banner.title}</h3>
-                  <p className="text-gray-400 text-sm font-light leading-relaxed max-w-sm">
-                    {banner.tagline}
-                  </p>
+              <p>
+                We believe fashion should move with intention. Instead of chasing trends, we focus on creating timeless shoulder bags that you can carry every day, for years to come. Each piece is designed to be practical, elegant, and durable — something that becomes a part of your routine, your workdays, your travels, and your everyday moments.
+              </p>
 
-                  <div className="pt-2">
-                    <Link
-                      href={banner.href}
-                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black hover:underline group cursor-pointer"
-                    >
-                      <span>Shop Collection</span>
-                      <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </div>
-                </div>
+              <p>
+                Our commitment to conscious living is at the heart of everything we do. That’s why we use plant-based eucalyptus leather — a thoughtful alternative that uses less water, fewer chemicals, and creates a lower environmental impact. It allows us to create bags that feel premium and luxurious, while still being responsible towards the planet.
+              </p>
+
+              <p>
+                But for us, being conscious goes beyond materials. It’s about creating products with purpose. It’s about designing less, but designing better. It’s about encouraging mindful buying and making pieces that truly last.
+              </p>
+
+              <p className="font-medium text-black">
+                NOVE is for the conscious mind — for people who believe small choices can make a big difference. For those who want their style to be effortless, timeless, and meaningful.
+              </p>
+
+              <div className="py-8 border-y border-black/5 my-10 max-w-2xl mx-auto">
+                <p className="font-serif italic text-2xl text-black leading-relaxed">
+                  "Because we believe luxury should not only look good — it should feel right too."
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
 
+            <div className="pt-8">
+              <span className="text-xl font-serif font-bold tracking-[0.2em] uppercase text-[#1d1d1f]">
+                NOVE
+              </span>
+              <p className="text-xs tracking-[0.3em] uppercase text-gray-400 mt-3 font-semibold">
+                Designed to last. Made responsibly.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── 3. Craftsmanship Split Showcase ── */}
       <section className="bg-white py-24 px-6 w-full border-b border-black/5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          
+
           <div className="relative aspect-[16/9] md:aspect-[1.8/1] lg:aspect-[1.5/1] w-full flex items-center justify-center bg-[#fbfbfd] border border-black/[0.03] shadow-md rounded-[24px] md:rounded-[40px] overflow-hidden group">
             <AnimatePresence mode="wait">
               <motion.div
@@ -377,9 +351,9 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0 w-full h-full"
               >
-                <Image 
-                  src={BANNERS[activeShowcase].src} 
-                  alt="Showcase detail" 
+                <Image
+                  src={BANNERS[activeShowcase].src}
+                  alt="Showcase detail"
                   fill
                   className="object-contain w-full h-full"
                 />
@@ -402,7 +376,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex flex-col justify-center text-left max-w-xl">
             <span className="text-xs tracking-[0.3em] uppercase font-bold text-gray-400 mb-4 block">OUR PHILOSOPHY</span>
             <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-[#1d1d1f] mb-6 leading-tight">
@@ -411,7 +385,7 @@ export default function Home() {
             <p className="text-lg text-gray-500 leading-relaxed font-light mb-8">
               By rethinking modern proportions, we have developed a weightless standard. Using carbon-neutral derivatives, each silhouette is crafted to blend architectural structure with adaptive fluid contours.
             </p>
-            
+
             {/* Craftsmanship Features List */}
             <div className="space-y-6 border-t border-black/5 pt-8">
               <div className="flex items-start gap-4">
@@ -457,7 +431,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="absolute right-[-5%] bottom-[-15%] w-[45%] h-[80%] opacity-20 group-hover:scale-105 transition-transform duration-700 pointer-events-none">
-                 <Image src="/products/Ember/ember_5.png" alt="Fluid" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain" />
+                <Image src="/products/Ember/ember_5.png" alt="Fluid" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain" />
               </div>
             </div>
 
@@ -485,24 +459,64 @@ export default function Home() {
 
             {/* Ready to feel it Card */}
             <div className="col-span-1 md:col-span-2 bg-white border border-gray-100 rounded-[32px] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 min-h-[320px] group">
-               <div className="max-w-sm flex flex-col items-center md:items-start text-center md:text-left">
-                 <h4 className="text-2xl font-bold mb-6 text-[#1d1d1f] tracking-tight">Ready to feel it?</h4>
-                 <Link 
-                   href="/store" 
-                   className="inline-flex rounded-full bg-[#1d1d1f] hover:bg-black text-white px-10 py-4 font-bold tracking-tight shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-                 >
-                   Go to Store
-                 </Link>
-               </div>
-               <div className="relative w-full md:w-1/2 h-[220px] flex items-center justify-center p-4">
-                  {/* Subtle Curved Canvas Frame */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#fcf9f6] to-[#f0f4fd] border border-black/[0.01] rounded-[60px_24px_80px_24px] pointer-events-none group-hover:rounded-[24px_80px_24px_80px] transition-all duration-700" />
-                  <div className="relative w-[85%] h-[85%] z-10 transition-transform duration-700 group-hover:scale-[1.04]">
-                     <Image src="/products/Terra/te1_v2.png" alt="Store" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.05)]" />
-                  </div>
-               </div>
+              <div className="max-w-sm flex flex-col items-center md:items-start text-center md:text-left">
+                <h4 className="text-2xl font-bold mb-6 text-[#1d1d1f] tracking-tight">Ready to feel it?</h4>
+                <Link
+                  href="/store"
+                  className="inline-flex rounded-full bg-[#1d1d1f] hover:bg-black text-white px-10 py-4 font-bold tracking-tight shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  Go to Store
+                </Link>
+              </div>
+              <div className="relative w-full md:w-1/2 h-[220px] flex items-center justify-center p-4">
+                {/* Subtle Curved Canvas Frame */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#fcf9f6] to-[#f0f4fd] border border-black/[0.01] rounded-[60px_24px_80px_24px] pointer-events-none group-hover:rounded-[24px_80px_24px_80px] transition-all duration-700" />
+                <div className="relative w-[85%] h-[85%] z-10 transition-transform duration-700 group-hover:scale-[1.04]">
+                  <Image src="/products/Terra/te1_v2.png" alt="Store" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.05)]" />
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── 5. THE HUMAN LAYER (FOUNDER SECTION) ── */}
+      <section className="bg-black text-white py-24 px-6 w-full overflow-hidden">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="lg:col-span-5 relative aspect-[4/5] max-w-[400px] w-full mx-auto rounded-[120px_40px_120px_40px] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+          >
+             <Image 
+               src="/founder.png" 
+               alt="Founder Heer" 
+               fill 
+               className="object-cover grayscale hover:scale-105 transition-transform duration-1000" 
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="lg:col-span-7 space-y-8 max-w-2xl"
+          >
+            <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-gray-500 font-bold block">The Human Layer</span>
+            <h3 className="text-4xl md:text-6xl font-bold tracking-tighter leading-[0.9]">
+              Born from a <br/> <span className="text-gray-400 italic font-light">personal quest.</span>
+            </h3>
+            <div className="space-y-6">
+              <p className="text-lg md:text-xl text-gray-400 font-light leading-relaxed">
+                &ldquo;NOVE didn&rsquo;t start in a corporate boardroom. It started with a simple frustration — why was sustainable fashion so often a compromise on style? I wanted to create something that didn&rsquo;t just replace traditional leather, but actually surpassed it in every sensory dimension.&rdquo;
+              </p>
+              <p className="text-base md:text-lg text-white font-medium italic">— Heer, Founder</p>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>

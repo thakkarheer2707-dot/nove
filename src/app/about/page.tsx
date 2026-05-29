@@ -70,7 +70,7 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
             <div className="relative w-[90%] h-[90%] hover:scale-[1.03] transition-transform duration-700">
               <Image 
-                src="/products/Ember/Black/product_4.png" 
+                src="/products/product_10.png" 
                 alt="Care" 
                 fill 
                 className="object-contain" 
@@ -114,7 +114,7 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
             <div className="relative w-[90%] h-[90%] hover:scale-[1.03] transition-transform duration-700">
               <Image 
-                src="/products/Terra/HeatherBrown/product_23.png" 
+                src="/products/product_19.png" 
                 alt="Detail" 
                 fill 
                 className="object-contain" 

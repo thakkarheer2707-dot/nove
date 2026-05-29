@@ -3,9 +3,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import RecentlyViewedTracker from "@/components/RecentlyViewedTracker";
-import ProductReviews from "@/components/ProductReviews";
 import ArtisanRecommendations from "@/components/ArtisanRecommendations";
 import ProductView from "@/components/ProductView";
+import ProductStory from "@/components/ProductStory";
 
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -37,9 +37,11 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
       {/* Interactive Product View */}
       <ProductView product={product} />
 
+      {/* Product Story Section */}
+      <ProductStory productId={product.id} />
+
       {/* Featured Reviews & Recommendations */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-32">
-        <ProductReviews />
         <ArtisanRecommendations currentProductId={product.id} />
       </div>
     </div>
