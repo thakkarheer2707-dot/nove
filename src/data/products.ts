@@ -47,10 +47,11 @@ export const products: Product[] = [
       {
         color: "Olive Green",
         images: [
-          "/products/Ember/ember_5.png",
-          "/products/Ember/ember_2.png",
-          "/products/Ember/OliveGreen/img4.jpeg",
-          "/products/Ember/OliveGreen/img5.jpeg"
+          "/products/Updates/green1.jpeg",
+          "/products/Updates/green2.jpeg",
+          "/products/Updates/green3.jpeg",
+          "/products/Updates/green4.jpeg",
+          "/products/Updates/green5.jpeg"
         ],
         price: 5999
       }
