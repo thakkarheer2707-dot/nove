@@ -111,7 +111,6 @@ export const products: Product[] = [
         color: "Dusty Pink",
         images: [
           "/products/product_21.png",
-          "/products/Aero/aero_1.jpeg",
           "/products/Aero/aero_3.jpeg"
         ],
         price: 5999
