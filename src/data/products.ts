@@ -113,7 +113,7 @@ export const products: Product[] = [
           "/products/Aero/aero_4.jpeg",
           "/products/Aero/aero_1.jpeg",
           "/products/Aero/aero_3.jpeg",
-          "/products/Aero/aero_5.jpeg"
+          "/products/product_21.png"
         ],
         price: 5999
       }
