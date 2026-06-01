@@ -36,22 +36,22 @@ export const products: Product[] = [
       {
         color: "Black",
         images: [
-          "/products/Updates/black1.jpeg",
-          "/products/Updates/black2.jpeg",
-          "/products/Updates/black3.jpeg",
-          "/products/Updates/black4.jpeg",
-          "/products/Updates/black5.jpeg"
+          "/products/Ember/Black/img2.jpeg",
+          "/products/Ember/Black/img1.jpeg",
+          "/products/Ember/Black/img5.jpeg",
+          "/products/Ember/Black/img3.jpeg",
+          "/products/Ember/Black/img4.jpeg"
         ],
         price: 5999
       },
       {
         color: "Olive Green",
         images: [
-          "/products/Updates/green1.jpeg",
-          "/products/Updates/green2.jpeg",
-          "/products/Updates/green3.jpeg",
-          "/products/Updates/green4.jpeg",
-          "/products/Updates/green5.jpeg"
+          "/products/Ember/OliveGreen/img3.jpeg",
+          "/products/Ember/OliveGreen/img1.jpeg",
+          "/products/Ember/OliveGreen/img2.jpeg",
+          "/products/Ember/OliveGreen/img4.jpeg",
+          "/products/Ember/OliveGreen/img5.jpeg"
         ],
         price: 5999
       }
