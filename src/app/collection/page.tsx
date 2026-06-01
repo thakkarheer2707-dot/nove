@@ -20,8 +20,8 @@ const COLLECTIONS = [
       "Ember by NOVE\nInspired by fire. Designed to last."
     ],
     icon: Flame,
-    image: "/products/Ember/ember_1.png",
-    color: "bg-orange-50",
+    image: "/products/black.jpeg",
+    color: "bg-[#f4f5f7]",
     link: "/store?collection=Ember+Series"
   },
   {
@@ -72,7 +72,7 @@ const COLLECTIONS = [
       "Terra by NOVE\nInspired by earth. Designed to last."
     ],
     icon: Globe,
-    image: "/products/Terra/te1_v2.png",
+    image: "/products/brown.jpeg",
     color: "bg-[#f4f0ec]",
     link: "/store?collection=Terra+Series"
   }
@@ -203,7 +203,7 @@ export default function CollectionPage() {
                     src={collection.image} 
                     alt={collection.name} 
                     fill 
-                    className="object-contain product-image"
+                    className="object-contain product-image mix-blend-multiply"
                    />
                 </motion.div>
              </div>
