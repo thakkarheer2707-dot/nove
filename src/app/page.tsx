@@ -227,12 +227,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* High-End Minimalist Active Tag */}
-              <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-white/80 backdrop-blur-md px-4.5 py-2 rounded-full border border-black/5 shadow-sm pointer-events-none">
-                <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#1d1d1f]">
-                  {BANNERS[heroIndex].subtitle} ACTIVE
-                </span>
-              </div>
 
             </motion.div>
           </div>

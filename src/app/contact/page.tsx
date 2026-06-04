@@ -89,11 +89,16 @@ export default function ContactPage() {
 
             {/* Info Cards */}
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-[#1d1d1f] text-white rounded-[24px] p-6">
-                <MessageCircle size={24} strokeWidth={1.5} className="mb-4 text-gray-400" />
+              <a
+                href="https://www.instagram.com/thenove.in?igsh=MW5saHoxdzllYTc0OQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#1d1d1f] text-white rounded-[24px] p-6 block hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-pointer group"
+              >
+                <MessageCircle size={24} strokeWidth={1.5} className="mb-4 text-gray-400 group-hover:text-white transition-colors" />
                 <p className="font-semibold mb-1">Live Chat</p>
-                <p className="text-gray-400 text-sm">Chat with us on Instagram @nove.bags</p>
-              </div>
+                <p className="text-gray-400 text-sm">Chat with us on Instagram @thenove.in</p>
+              </a>
               <div className="bg-white rounded-[24px] p-6 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
                 <Clock size={24} strokeWidth={1.5} className="mb-4 text-gray-400" />
                 <p className="font-semibold text-[#1d1d1f] mb-1">Response Time</p>

@@ -104,7 +104,7 @@ export const products: Product[] = [
         color: "Black",
         images: [
           "/products/Aero/Black/ae_main.png",
-          "/products/Aero/Black/img3.jpeg",
+          "/products/bp.jpeg",
           "/products/Aero/Black/img4.jpeg",
           "/products/Aero/Black/img5.jpeg"
         ],
@@ -115,7 +115,7 @@ export const products: Product[] = [
         images: [
           "/products/pink1.jpeg",
           "/products/pink2.jpeg",
-          "/products/pink3.jpeg",
+          "/products/pp.jpeg",
           "/products/pink4.jpeg"
         ],
         price: 5999

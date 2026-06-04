@@ -72,7 +72,7 @@ const COLLECTIONS = [
       "Terra by NOVE\nInspired by earth. Designed to last."
     ],
     icon: Globe,
-    image: "/products/brown.jpeg",
+    image: "/products/b1.jpeg",
     color: "bg-[#f4f0ec]",
     link: "/store?collection=Terra+Series"
   }

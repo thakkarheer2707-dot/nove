@@ -274,20 +274,21 @@ export default function CartDrawer() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="absolute inset-0 bg-[#fbfbfd] z-40 flex flex-col p-8"
                 >
-                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-black/5 pt-2">
+                  <div className="flex items-center justify-between mb-8 pb-6 border-b border-black/5 pt-2">
                     <h2 className="text-xl font-bold text-[#1d1d1f] tracking-widest uppercase">Delivery Details</h2>
-                    <button onClick={() => setShowAddressForm(false)} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full">
+                    <button onClick={() => setShowAddressForm(false)} className="text-gray-400 hover:text-[#1d1d1f] transition-colors bg-black/5 p-2 rounded-full cursor-pointer">
                       <X size={20} />
                     </button>
                   </div>
 
-                  <div className="flex-1 space-y-8">
+                  {/* Scrollable Container with nice spacing and scrollbar settings */}
+                  <div className="flex-1 overflow-y-auto pr-1 -mr-2 space-y-6 pb-8 scrollbar-thin">
                      <p className="text-gray-500 font-medium text-sm leading-relaxed">
                         Where should we dispatch your NOVE artisan selections? Please provide a precise destination.
                      </p>
 
                      <div>
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Street Address / Apartment</label>
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2 block">Street Address / Apartment</label>
                         <input 
                           type="text"
                           placeholder="Ex: 123 Luxury Lane, Suite 402"
@@ -299,7 +300,7 @@ export default function CartDrawer() {
 
                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">City</label>
+                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2 block">City</label>
                            <input 
                             type="text"
                             placeholder="MUMBAI"
@@ -309,7 +310,7 @@ export default function CartDrawer() {
                            />
                         </div>
                         <div>
-                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Pincode</label>
+                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2 block">Pincode</label>
                            <input 
                             type="text"
                             placeholder="400001"
@@ -322,7 +323,7 @@ export default function CartDrawer() {
                      </div>
 
                      <div>
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Mobile Number</label>
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2 block">Mobile Number</label>
                         <input 
                           type="tel"
                           placeholder="Ex: 9876543210"
@@ -334,19 +335,36 @@ export default function CartDrawer() {
 
                       {(!user || user.isGuest) && (
                         <div>
-                          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 block">Email Address (For Order Tracking)</label>
-                          <input 
-                            type="email"
-                            placeholder="you@example.com"
-                            value={address.email}
-                            onChange={(e) => setAddress({...address, email: e.target.value})}
-                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
-                          />
+                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2 block">Email Address (For Order Tracking)</label>
+                           <input 
+                             type="email"
+                             placeholder="you@example.com"
+                             value={address.email}
+                             onChange={(e) => setAddress({...address, email: e.target.value})}
+                             className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-[#1d1d1f] placeholder:text-gray-400 focus:border-[#1d1d1f] focus:ring-1 focus:ring-[#1d1d1f] focus:outline-none transition-all shadow-sm"
+                           />
                         </div>
                       )}
 
-                      <div className="pt-8">
+                      {/* Separate Options: Save Details Only vs Save & Proceed */}
+                      <div className="pt-6 flex flex-col gap-3">
                         <button
+                          type="button"
+                          onClick={() => {
+                            const isEmailValid = (user && !user.isGuest) || (address.email && address.email.includes("@"));
+                            if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
+                              setShowAddressForm(false);
+                            } else {
+                              alert("Please complete every field accurately (ensure valid email, pincode and phone number).");
+                            }
+                          }}
+                          className="w-full bg-white border border-black/10 text-[#1d1d1f] py-4 rounded-full font-bold hover:bg-black/5 hover:border-black/20 transition-all shadow-sm active:scale-[0.98] cursor-pointer text-sm"
+                        >
+                          Save Details Only
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => {
                             const isEmailValid = (user && !user.isGuest) || (address.email && address.email.includes("@"));
                             if (address.street && address.city && address.pincode.length >= 6 && address.phone.length >= 10 && isEmailValid) {
@@ -357,7 +375,7 @@ export default function CartDrawer() {
                               alert("Please complete every field accurately (ensure valid email, pincode and phone number).");
                             }
                           }}
-                          className="w-full bg-[#1d1d1f] text-white py-5 rounded-full font-bold hover:bg-black transition-colors shadow-lg shadow-black/10 active:scale-[0.98] cursor-pointer"
+                          className="w-full bg-[#1d1d1f] text-white py-4 rounded-full font-bold hover:bg-black transition-all shadow-lg shadow-black/10 active:scale-[0.98] cursor-pointer text-sm"
                         >
                           {paymentMethod === "online" ? "Save & Continue to Payment" : "Save & Place Order"}
                         </button>
@@ -519,6 +537,23 @@ export default function CartDrawer() {
             {items.length > 0 && (
               <div className="p-8 border-t border-black/5 bg-white">
                 
+                {/* Saved Address Summary */}
+                {address.street && address.city && address.pincode && address.phone && (
+                  <div className="mb-6 bg-[#fbfbfd] border border-black/5 p-4 rounded-[20px] text-xs text-gray-600 relative shadow-sm">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-bold text-[#1d1d1f] uppercase tracking-wider text-[9px] bg-black/5 px-2 py-0.5 rounded">Delivery Destination</span>
+                      <button 
+                        onClick={() => setShowAddressForm(true)} 
+                        className="text-[9px] text-gray-500 hover:text-black font-bold uppercase tracking-widest underline cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <p className="font-semibold text-gray-800 truncate mb-0.5">{address.street}</p>
+                    <p className="text-gray-500 font-medium">{address.city} - {address.pincode} | Tel: {address.phone}</p>
+                  </div>
+                )}
+
                 {/* Secure Payment Note */}
                 <div className="mb-6 bg-emerald-50/60 border border-emerald-100/60 p-4 rounded-[20px] flex items-center gap-3">
                   <CreditCard size={18} className="text-emerald-700 flex-shrink-0" />

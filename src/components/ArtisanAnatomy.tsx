@@ -48,7 +48,7 @@ export default function ArtisanAnatomy() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           {/* Main Visual - 5 cols */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-[450px] aspect-square md:aspect-[4/3] lg:aspect-square bg-white/[0.02] border border-white/5 rounded-[40px] p-8 md:p-12 flex items-center justify-center overflow-hidden group">
+            <div className="relative w-full max-w-[450px] aspect-square md:aspect-[4/3] lg:aspect-square bg-white border border-white/10 rounded-[40px] p-8 md:p-12 flex items-center justify-center overflow-hidden group">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.03)_0%,_transparent_75%)] pointer-events-none" />
               
               {/* Luxury ambient shadow */}
@@ -56,7 +56,7 @@ export default function ArtisanAnatomy() {
               
               <div className="relative w-[90%] h-[90%] hover:scale-[1.03] transition-transform duration-700">
                 <Image
-                  src="/products/Terra/terra_3.png"
+                  src="/products/b1.jpeg"
                   alt="NOVE Artisan Anatomy"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
