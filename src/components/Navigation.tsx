@@ -1,253 +1,240 @@
 "use client";
 
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Search, Menu, X, User, Heart, ArrowRight } from "lucide-react";
+import { useScroll, useMotionValueEvent, AnimatePresence, motion } from "framer-motion";
+import { Search, Menu, X, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { useCart } from "./CartProvider";
-import { useWishlist } from "./WishlistProvider";
 import SearchOverlay from "./SearchOverlay";
-
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Store", href: "/store" },
-  { label: "Collection", href: "/collection" },
-  { label: "About", href: "/about" },
-];
+import TryAtHomeModal from "./TryAtHomeModal";
 
 export default function Navigation() {
   const { user } = useAuth();
   const { items, setIsCartOpen } = useCart();
-  const { wishlist } = useWishlist();
   const { scrollY } = useScroll();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-  const isExpanded = isScrolled || isManuallyExpanded;
+  const [isTryAtHomeOpen, setIsTryAtHomeOpen] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 50) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
-    }
+    setIsScrolled(latest > 30);
   });
+
+  const totalCartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const isTransparent = isHome && !isScrolled;
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
-        <motion.header
-          onClick={() => setIsManuallyExpanded(!isManuallyExpanded)}
-          layout
-          initial={false}
-          animate={{
-            width: isExpanded ? "95vw" : "200px",
-            height: isExpanded ? "64px" : "44px",
-            borderRadius: isExpanded ? "24px" : "999px",
-            backgroundColor: isExpanded ? "rgba(242, 242, 247, 0.85)" : "rgba(242, 242, 247, 0.5)",
-            backdropFilter: isExpanded ? "blur(30px)" : "blur(10px)",
-            y: isExpanded ? 0 : 10,
-          }}
-          className="relative pointer-events-auto border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.05)] overflow-hidden flex items-center px-6 max-w-7xl mx-auto cursor-pointer"
-        >
-          <div className="flex w-full items-center justify-between gap-4">
-            {/* Left: Nav Links */}
-            <AnimatePresence>
-              {isExpanded && (
-                <motion.nav
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="hidden md:flex space-x-8 items-center"
-                >
-                  {NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-[13px] text-gray-400 hover:text-[#1d1d1f] transition-colors font-medium"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </motion.nav>
-              )}
-            </AnimatePresence>
-
-            {/* Mobile Menu Icon (collapsed only) */}
-            {!isExpanded && (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.stopPropagation(); setIsMobileMenuOpen(true); }}
-                className="md:hidden text-gray-500"
-              >
-                <Menu size={18} />
-              </motion.button>
-            )}
-
-            {/* Center: Logo */}
-            <motion.div
-              layout
-              className={`flex-shrink-0 flex items-center justify-center ${isExpanded ? "" : "absolute left-1/2 -translate-x-1/2"}`}
-            >
-              <Link
-                href="/"
-                onClick={(e) => e.stopPropagation()}
-                className={`${isExpanded ? "text-xl" : "text-lg"} font-serif text-[#1d1d1f]/90 tracking-[0.1em] font-medium transition-all duration-500`}
-              >
-                NOVE
-              </Link>
-            </motion.div>
-
-            {/* Right: Icons */}
-            <div className="flex items-center space-x-4">
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="hidden md:flex items-center space-x-4"
-                  >
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => { e.stopPropagation(); setIsSearchOpen(true); }}
-                      className="text-[#1d1d1f]/60 hover:text-black transition-colors"
-                    >
-                      <Search size={18} strokeWidth={2} />
-                    </motion.button>
-                    <motion.div whileTap={{ scale: 0.9 }}>
-                      <Link
-                        href={user ? (user.email === 'admin@nove.in' ? '/admin' : '/profile') : "/login"}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-[#1d1d1f]/60 hover:text-black transition-colors flex items-center gap-2"
-                      >
-                        <User size={18} strokeWidth={2} />
-                        <span className="text-[11px] font-bold uppercase tracking-tighter text-[#1d1d1f]/40">
-                          {user ? "Profile" : "Guest"}
-                        </span>
-                      </Link>
-                    </motion.div>
-                    <motion.div whileTap={{ scale: 0.9 }}>
-                      <Link
-                        href="/profile#wishlist"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-[#1d1d1f]/70 hover:text-black transition-colors relative h-8 w-8 flex items-center justify-center p-0 m-0 border-none bg-transparent cursor-pointer"
-                      >
-                        <Heart size={18} strokeWidth={2} className={wishlist.length > 0 ? "fill-[#1d1d1f]" : ""} />
-                        {wishlist.length > 0 && (
-                          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#1d1d1f] text-[9px] font-bold text-white shadow-sm scale-90 border border-white/20">
-                            {wishlist.length}
-                          </span>
-                        )}
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.stopPropagation(); setIsCartOpen(true); }}
-                className="text-[#1d1d1f]/80 hover:text-black transition-colors relative h-10 w-10 flex items-center justify-center p-0 m-0 border-none bg-transparent cursor-pointer"
-              >
-                <ShoppingBag size={isExpanded ? 20 : 18} strokeWidth={2} />
-                {items.length > 0 && (
-                  <span className="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#1d1d1f] text-[9px] font-bold text-white shadow-sm scale-90 border border-white/20">
-                    {items.length}
-                  </span>
-                )}
-              </motion.button>
-
-              {isExpanded && (
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => { e.stopPropagation(); setIsMobileMenuOpen(!isMobileMenuOpen); }}
-                  className="md:hidden text-[#1d1d1f]"
-                >
-                  <Menu size={20} />
-                </motion.button>
-              )}
-            </div>
-          </div>
-        </motion.header>
+      {/* ── Top Animated Marquee Bar (Mir Kash signature) ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-black text-white text-[10px] md:text-[11px] uppercase tracking-[0.2em] py-2 overflow-hidden select-none border-b border-white/10">
+        <div className="flex whitespace-nowrap animate-[marquee_25s_linear_infinite]">
+          <span className="mx-8 font-light">HANDMADE VEGAN BAGS</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">MADE SLOWLY, WORN FOREVER</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">PLANT LEATHER</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">SHIPS WORLDWIDE</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">CRUELTY-FREE ALWAYS</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">COMPLIMENTARY TRY AT HOME IN MUMBAI</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">HANDMADE VEGAN BAGS</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">MADE SLOWLY, WORN FOREVER</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">PLANT LEATHER</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">SHIPS WORLDWIDE</span>
+          <span className="mx-4 opacity-40">•</span>
+          <span className="mx-8 font-light">CRUELTY-FREE ALWAYS</span>
+        </div>
       </div>
+
+      {/* ── Main Mir Kash Two-Tier Navigation (Transparent over Hero Poster) ── */}
+      <header
+        className={`fixed top-[29px] left-0 right-0 z-40 w-full transition-all duration-300 ${
+          isTransparent
+            ? "bg-gradient-to-b from-black/60 via-black/30 to-transparent text-white border-b border-white/15"
+            : "bg-white/95 backdrop-blur-md text-[#1a1a1a] shadow-xs border-b border-stone-200"
+        }`}
+      >
+        {/* Tier 1: Brand & Utilities */}
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-8 h-[56px] md:h-[64px] flex items-center justify-between relative">
+          {/* Left: Mobile Menu / Search */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden p-1 hover:opacity-75 transition-opacity"
+              aria-label="Menu"
+            >
+              <Menu size={22} strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="hidden md:flex items-center gap-2 text-[12px] uppercase tracking-[0.12em] hover:opacity-75 transition-opacity cursor-pointer font-light"
+            >
+              <Search size={15} strokeWidth={1.5} />
+              <span>Search</span>
+            </button>
+          </div>
+
+          {/* Center: Brand Logo */}
+          <div className="absolute left-1/2 -translate-x-1/2 text-center">
+            <Link
+              href="/"
+              className={`font-serif text-[26px] md:text-[30px] tracking-[0.22em] font-normal uppercase transition-opacity hover:opacity-85 ${
+                isTransparent ? "text-white drop-shadow-sm" : "text-[#1a1a1a]"
+              }`}
+            >
+              NOVA
+            </Link>
+          </div>
+
+          {/* Right: Account & Cart */}
+          <div className="flex items-center space-x-6 text-[12px] uppercase tracking-[0.12em] font-light">
+            <Link
+              href={user ? (user.email === "admin@nove.in" ? "/admin" : "/profile") : "/login"}
+              className="hidden sm:inline-block hover:opacity-75 transition-opacity"
+            >
+              Account
+            </Link>
+
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="hover:opacity-75 transition-opacity cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Cart</span>
+              <span className="font-normal">({totalCartCount})</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tier 2: Sub-Nav Links */}
+        <div
+          className={`hidden md:flex items-center justify-center space-x-10 py-2.5 text-[12px] uppercase tracking-[0.14em] font-light transition-colors ${
+            isTransparent
+              ? "border-t border-white/10 text-white/95"
+              : "border-t border-stone-100 text-[#1a1a1a]"
+          }`}
+        >
+          <Link
+            href="/store"
+            className="hover:opacity-70 transition-opacity py-0.5"
+          >
+            Shop All
+          </Link>
+          <Link
+            href="/about#materials"
+            className="hover:opacity-70 transition-opacity py-0.5"
+          >
+            Materials
+          </Link>
+          <Link
+            href="/about"
+            className="hover:opacity-70 transition-opacity py-0.5"
+          >
+            About
+          </Link>
+          <button
+            onClick={() => setIsTryAtHomeOpen(true)}
+            className="hover:opacity-70 transition-opacity py-0.5 cursor-pointer uppercase font-light"
+          >
+            Try at Home
+          </button>
+        </div>
+      </header>
 
       {/* Navigation Overlays */}
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <TryAtHomeModal isOpen={isTryAtHomeOpen} onClose={() => setIsTryAtHomeOpen(false)} />
 
-      {/* Mobile Menu Overlay - Premium iOS Style */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "100%" }}
-            transition={{ type: "spring", damping: 40, stiffness: 400 }}
-            className="fixed inset-0 z-[60] bg-[#fbfbfd]/80 backdrop-blur-3xl flex flex-col pt-safe"
-          >
-            <div className="flex justify-between items-center px-8 py-10">
-              <span className="font-serif text-3xl tracking-widest text-[#1d1d1f]">NOVE</span>
-              <motion.button 
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="p-3 bg-[#1d1d1f]/5 rounded-full"
-              >
-                <X size={24} strokeWidth={1} />
-              </motion.button>
-            </div>
-            
-            <motion.div 
-              initial="closed"
-              animate="open"
-              variants={{
-                open: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-                closed: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
-              }}
-              className="flex flex-col space-y-6 p-10 mt-4"
+          <div className="fixed inset-0 z-50 flex">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.25 }}
+              className="relative w-4/5 max-w-sm bg-white text-[#1a1a1a] h-full shadow-2xl flex flex-col justify-between p-6 sm:p-8 z-10"
             >
-              {NAV_LINKS.map((link) => (
-                <motion.div
-                  key={link.label}
-                  variants={{
-                    open: { opacity: 1, x: 0, scale: 1 },
-                    closed: { opacity: 0, x: -20, scale: 0.95 }
-                  }}
-                >
-                  <Link
-                    href={link.href}
+              <div>
+                <div className="flex justify-between items-center pb-6 border-b border-stone-100">
+                  <span className="font-serif text-2xl tracking-[0.2em]">NOVA</span>
+                  <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-5xl text-[#1d1d1f] font-bold tracking-tighter hover:text-gray-400 transition-colors"
+                    className="p-2 text-stone-500 hover:text-black"
                   >
-                    {link.label}
+                    <X size={20} strokeWidth={1.5} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col space-y-6 mt-8 text-sm uppercase tracking-[0.14em] text-[#1a1a1a]">
+                  <Link
+                    href="/store"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="hover:text-stone-500"
+                  >
+                    Shop All
                   </Link>
-                </motion.div>
-              ))}
-              
-              <motion.div 
-                variants={{
-                  open: { opacity: 1, y: 0 },
-                  closed: { opacity: 0, y: 20 }
-                }}
-                className="pt-12 mt-12 border-t border-[#1d1d1f]/5"
-              >
+                  <Link
+                    href="/about#materials"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="hover:text-stone-500"
+                  >
+                    Materials
+                  </Link>
+                  <Link
+                    href="/about"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="hover:text-stone-500"
+                  >
+                    About
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsTryAtHomeOpen(true);
+                    }}
+                    className="text-left hover:text-stone-500 cursor-pointer uppercase"
+                  >
+                    Try at Home
+                  </button>
+                </div>
+              </div>
+
+              <div className="border-t border-stone-100 pt-6 space-y-3 text-xs uppercase tracking-wider text-stone-600">
                 <Link
-                  href={user ? (user.email === 'admin@nove.in' ? '/admin' : '/profile') : "/login"}
+                  href={user ? (user.email === "admin@nove.in" ? "/admin" : "/profile") : "/login"}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-2xl text-gray-400 font-medium tracking-tight flex items-center justify-between"
+                  className="flex items-center gap-2 hover:text-black"
                 >
-                  <span>{user ? `Account (${user.name.split(' ')[0]})` : "Sign In / Guest"}</span>
-                  <ArrowRight size={20} className="text-[#1d1d1f]/20" />
+                  <User size={15} strokeWidth={1.5} />
+                  <span>{user ? `Account (${user.name.split(" ")[0]})` : "Account / Sign in"}</span>
                 </Link>
-              </motion.div>
+                <div className="text-[10px] text-stone-400 tracking-widest pt-2">
+                  Mumbai · Hong Kong · New York
+                </div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>
   );
 }
-

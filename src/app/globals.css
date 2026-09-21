@@ -75,10 +75,7 @@ a, button, [role="button"] {
   box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
-/* Fluid Typography System */
-h1 { font-size: clamp(2.5rem, 10vw, 6rem); }
-h2 { font-size: clamp(2rem, 8vw, 4rem); }
-h3 { font-size: clamp(1.5rem, 6vw, 3rem); }
+/* Custom Typography Helpers */
 
 .text-gradient {
   background-clip: text;
