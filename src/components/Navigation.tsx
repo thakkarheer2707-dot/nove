@@ -30,30 +30,41 @@ export default function Navigation() {
 
   return (
     <>
-      {/* ── Top Animated Marquee Bar (Mir Kash signature) ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black text-white text-[10px] md:text-[11px] uppercase tracking-[0.2em] py-2 overflow-hidden select-none border-b border-white/10">
-        <div className="flex whitespace-nowrap animate-[marquee_25s_linear_infinite]">
-          <span className="mx-8 font-light">HANDMADE VEGAN BAGS</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">MADE SLOWLY, WORN FOREVER</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">PLANT LEATHER</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">SHIPS WORLDWIDE</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">CRUELTY-FREE ALWAYS</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">COMPLIMENTARY TRY AT HOME IN MUMBAI</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">HANDMADE VEGAN BAGS</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">MADE SLOWLY, WORN FOREVER</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">PLANT LEATHER</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">SHIPS WORLDWIDE</span>
-          <span className="mx-4 opacity-40">•</span>
-          <span className="mx-8 font-light">CRUELTY-FREE ALWAYS</span>
+      {/* ── Top Animated Marquee Bar (Mir Kash rotating ticker) ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-black text-white text-[10px] md:text-[11px] uppercase tracking-[0.2em] py-2 overflow-hidden select-none border-b border-white/10 flex whitespace-nowrap">
+        <div className="animate-marquee flex items-center">
+          <span className="mx-6 font-light">CRUELTY-FREE ALWAYS</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">NEW: EMBER &amp; AQUA</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">HANDMADE VEGAN BAGS</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">MADE SLOWLY, WORN FOREVER</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">EUCALYPTUS PLANT LEATHER</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">SHIPS WORLDWIDE</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">COMPLIMENTARY TRY AT HOME IN MUMBAI</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">14-DAY HOME TRIAL</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">CRUELTY-FREE ALWAYS</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">NEW: EMBER &amp; AQUA</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">HANDMADE VEGAN BAGS</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">MADE SLOWLY, WORN FOREVER</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">EUCALYPTUS PLANT LEATHER</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">SHIPS WORLDWIDE</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">COMPLIMENTARY TRY AT HOME IN MUMBAI</span>
+          <span className="opacity-30">•</span>
+          <span className="mx-6 font-light">14-DAY HOME TRIAL</span>
+          <span className="opacity-30">•</span>
         </div>
       </div>
 
